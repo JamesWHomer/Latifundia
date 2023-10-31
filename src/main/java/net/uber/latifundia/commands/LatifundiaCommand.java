@@ -1,9 +1,14 @@
 package net.uber.latifundia.commands;
 
+import net.uber.latifundia.Latifundia;
+import net.uber.latifundia.claimmanagement.WorldTree;
+import net.uber.latifundia.claimmanagement.WorldTreeManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.awt.*;
 
 public class LatifundiaCommand implements CommandExecutor {
 
@@ -45,6 +50,13 @@ public class LatifundiaCommand implements CommandExecutor {
     private void handleClaim(Player player, String[] args) {
         // Implementation of claim command
         player.sendMessage("Claiming land...");
+
+        WorldTreeManager worldTreeManager = Latifundia.getPlugin(Latifundia.class).getWorldTreeManager();
+        WorldTree worldTree = worldTreeManager.getWorldTree(player.getWorld());
+
+        Point playerChunk = new Point(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
+
+        player.sendMessage("Claimed: " + worldTree.insertClaim(playerChunk, player.getUniqueId()));
     }
 
     private void handleUnclaim(Player player, String[] args) {
@@ -54,7 +66,14 @@ public class LatifundiaCommand implements CommandExecutor {
 
     private void handleInfo(Player player, String[] args) {
         // Implementation of info command
+
+        WorldTreeManager worldTreeManager = Latifundia.getPlugin(Latifundia.class).getWorldTreeManager();
+        WorldTree worldTree = worldTreeManager.getWorldTree(player.getWorld());
+
+        Point playerChunk = new Point(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
+
         player.sendMessage("Getting land information...");
+        player.sendMessage("Owner: " + worldTree.queryClaim(playerChunk));
     }
 
     private void handleCityState(Player player, String[] args) {
