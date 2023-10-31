@@ -1,0 +1,28 @@
+name: Latifundia
+version: '${project.version}'
+main: net.uber.latifundia.Latifundia
+api-version: '1.20'
+commands:
+  latifundia:
+    description: Base command for Latifundia
+    aliases: [lf]
+    usage: /<command> <subcommand> [arguments]
+    permission: latifundia.use
+    permission-message: You do not have permission to use this command.
+    subcommands:
+      claim:
+        description: Claim a land
+        usage: /<command> claim
+        permission: latifundia.claim
+      unclaim:
+        description: Unclaim a land
+        usage: /<command> unclaim
+        permission: latifundia.unclaim
+      info:
+        description: Get information about a land
+        usage: /<command> info
+        permission: latifundia.info
+      list:
+        description: List all your claims
+        usage: /<command> list
+        permission: latifundia.list
