@@ -22,7 +22,7 @@ commands:
         description: Get information about a land
         usage: /<command> info
         permission: latifundia.info
-      list:
-        description: List all your claims
-        usage: /<command> list
-        permission: latifundia.list
+      citystate:
+        description: Open citystate GUI
+        usage: /<command> citystate
+        permission: latifundia.citystate

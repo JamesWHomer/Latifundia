@@ -1,4 +1,4 @@
-package net.uber.latifundia;
+package net.uber.latifundia.commands;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -23,7 +23,7 @@ public class LatifundiaTabCompleter implements TabCompleter {
         subCommands.add("claim");
         subCommands.add("unclaim");
         subCommands.add("info");
-        subCommands.add("list");
+        subCommands.add("citystate");
         return subCommands;
     }
 }

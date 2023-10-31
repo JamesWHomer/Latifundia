@@ -1,4 +1,4 @@
-package net.uber.latifundia;
+package net.uber.latifundia.commands;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -32,9 +32,9 @@ public class LatifundiaCommand implements CommandExecutor {
                 // Handle info command
                 handleInfo(player, args);
                 break;
-            case "list":
+            case "citystate":
                 // Handle list command
-                handleList(player, args);
+                handleCityState(player, args);
                 break;
             default:
                 player.sendMessage("Unknown command. Use /" + label + " for help.");
@@ -57,8 +57,8 @@ public class LatifundiaCommand implements CommandExecutor {
         player.sendMessage("Getting land information...");
     }
 
-    private void handleList(Player player, String[] args) {
+    private void handleCityState(Player player, String[] args) {
         // Implementation of list command
-        player.sendMessage("Listing all claims...");
+        player.sendMessage("Handling citystate...");
     }
 }
