@@ -62,6 +62,14 @@ public class LatifundiaCommand implements CommandExecutor {
     private void handleUnclaim(Player player, String[] args) {
         // Implementation of unclaim command
         player.sendMessage("Unclaiming land...");
+
+        WorldTreeManager worldTreeManager = Latifundia.getPlugin(Latifundia.class).getWorldTreeManager();
+        WorldTree worldTree = worldTreeManager.getWorldTree(player.getWorld());
+
+        Point playerChunk = new Point(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
+
+        player.sendMessage("Unclaimed: " + worldTree.removeClaim(playerChunk));
+
     }
 
     private void handleInfo(Player player, String[] args) {

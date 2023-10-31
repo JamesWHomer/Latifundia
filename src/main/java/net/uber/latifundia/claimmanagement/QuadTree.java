@@ -65,6 +65,73 @@ public class QuadTree {
 
     }
 
+    public boolean remove(Point point) {
+        // Check if point is out of bounds
+        if (!bounds.contains(point)) return false;
+
+        // If this is a leaf node, remove the point directly
+        if ((bounds.top - bounds.bottom) <= 2) {
+            boolean removed = false;
+            for (int i = 0; i < quadNodes.length; i++) {
+                if (quadNodes[i] != null && quadNodes[i] instanceof QuadLeaf) {
+                    QuadLeaf leaf = (QuadLeaf) quadNodes[i];
+                    if (leaf.point.equals(point)) {
+                        quadNodes[i] = null;
+                        removed = true;
+                        break;
+                    }
+                }
+            }
+            return removed;
+        }
+
+        // Not a leaf node, delegate to the appropriate child node
+        Boundary[] subs = bounds.subdivide();
+        for (int i = 0; i < quadNodes.length; i++) {
+            if (quadNodes[i] != null && subs[i].contains(point)) {
+                boolean removed = quadNodes[i].remove(point);
+                if (removed) {
+                    cleanup();
+                }
+                return removed;
+            }
+        }
+
+        return false;
+    }
+
+    private void cleanup() {
+        int nonNullChildren = 0;
+        QuadTree singleChild = null;
+
+        for (QuadTree child : quadNodes) {
+            if (child != null) {
+                nonNullChildren++;
+                singleChild = child;
+            }
+        }
+
+        if (nonNullChildren == 0) {
+            // All child nodes are null, this node is now effectively empty
+            for (int i = 0; i < quadNodes.length; i++) {
+                quadNodes[i] = null;
+            }
+        } else if (nonNullChildren == 1 && singleChild instanceof QuadLeaf) {
+            // Only one child node and it is a leaf, replace this node with the leaf
+            this.bounds = singleChild.bounds;
+            this.quadNodes = singleChild.quadNodes;
+        } else {
+            // More than one child node, or single child is not a leaf, recursively cleanup child nodes
+            for (QuadTree child : quadNodes) {
+                if (child != null) {
+                    child.cleanup();
+                }
+            }
+        }
+    }
+
+
+
     public UUID query(Point point) {
 
         Bukkit.getConsoleSender().sendMessage("Depth: " + depth + ", Width: " + (bounds.top - bounds.bottom));

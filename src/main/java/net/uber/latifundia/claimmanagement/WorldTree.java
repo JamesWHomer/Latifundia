@@ -29,4 +29,10 @@ public class WorldTree {
 
     }
 
+    public boolean removeClaim(Point point) {
+
+        return headNode.remove(point);
+
+    }
+
 }
