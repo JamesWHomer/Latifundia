@@ -9,6 +9,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.awt.*;
+import java.sql.Time;
+import java.time.Instant;
 
 public class LatifundiaCommand implements CommandExecutor {
 
@@ -27,7 +29,9 @@ public class LatifundiaCommand implements CommandExecutor {
         switch (args[0].toLowerCase()) {
             case "claim":
                 // Handle claim command
+
                 handleClaim(player, args);
+
                 break;
             case "unclaim":
                 // Handle unclaim command
@@ -48,6 +52,9 @@ public class LatifundiaCommand implements CommandExecutor {
     }
 
     private void handleClaim(Player player, String[] args) {
+
+        long start = System.currentTimeMillis();
+
         // Implementation of claim command
         player.sendMessage("Claiming land...");
 
@@ -57,9 +64,15 @@ public class LatifundiaCommand implements CommandExecutor {
         Point playerChunk = new Point(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
 
         player.sendMessage("Claimed: " + worldTree.insertClaim(playerChunk, player.getUniqueId()));
+
+        long end = System.currentTimeMillis();
+        player.sendMessage("Time (ms): " + (end - start));
+
     }
 
     private void handleUnclaim(Player player, String[] args) {
+        long start = System.currentTimeMillis();
+
         // Implementation of unclaim command
         player.sendMessage("Unclaiming land...");
 
@@ -70,9 +83,13 @@ public class LatifundiaCommand implements CommandExecutor {
 
         player.sendMessage("Unclaimed: " + worldTree.removeClaim(playerChunk));
 
+        long end = System.currentTimeMillis();
+        player.sendMessage("Time (ms): " + (end - start));
+
     }
 
     private void handleInfo(Player player, String[] args) {
+        long start = System.currentTimeMillis();
         // Implementation of info command
 
         WorldTreeManager worldTreeManager = Latifundia.getPlugin(Latifundia.class).getWorldTreeManager();
@@ -82,6 +99,9 @@ public class LatifundiaCommand implements CommandExecutor {
 
         player.sendMessage("Getting land information...");
         player.sendMessage("Owner: " + worldTree.queryClaim(playerChunk));
+
+        long end = System.currentTimeMillis();
+        player.sendMessage("Time (ms): " + (end - start));
     }
 
     private void handleCityState(Player player, String[] args) {

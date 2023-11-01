@@ -22,8 +22,6 @@ public class QuadTree {
 
     public boolean insert(Point point, UUID owner) {
 
-        Bukkit.getConsoleSender().sendMessage("Depth: " + depth + ", Width: " + (bounds.top - bounds.bottom));
-
         if (!bounds.contains(point)) return false;
 
         Boundary[] subs = bounds.subdivide();
@@ -66,75 +64,73 @@ public class QuadTree {
     }
 
     public boolean remove(Point point) {
-        // Check if point is out of bounds
-        if (!bounds.contains(point)) return false;
 
-        // If this is a leaf node, remove the point directly
-        if ((bounds.top - bounds.bottom) <= 2) {
-            boolean removed = false;
-            for (int i = 0; i < quadNodes.length; i++) {
-                if (quadNodes[i] != null && quadNodes[i] instanceof QuadLeaf) {
-                    QuadLeaf leaf = (QuadLeaf) quadNodes[i];
-                    if (leaf.point.equals(point)) {
-                        quadNodes[i] = null;
-                        removed = true;
-                        break;
-                    }
-                }
-            }
-            return removed;
-        }
+        if (!bounds.contains(point)) throw new IllegalStateException("Point is not within boundary");
 
-        // Not a leaf node, delegate to the appropriate child node
         Boundary[] subs = bounds.subdivide();
-        for (int i = 0; i < quadNodes.length; i++) {
-            if (quadNodes[i] != null && subs[i].contains(point)) {
-                boolean removed = quadNodes[i].remove(point);
-                if (removed) {
-                    cleanup();
-                }
-                return removed;
+
+        if (quadNodes[0] != null && subs[0].contains(point)) {
+            boolean rembool = quadNodes[0].remove(point);
+            if (rembool) {
+                //Child was deleted
+                quadNodes[0] = null;
+                return hasNoChildren();
+            } else {
+                return false;
+            }
+        }
+        if (quadNodes[1] != null && subs[1].contains(point)) {
+            boolean rembool = quadNodes[1].remove(point);
+            if (rembool) {
+                //Child was deleted
+                quadNodes[1] = null;
+                return hasNoChildren();
+            } else {
+                return false;
+            }
+        }
+        if (quadNodes[2] != null && subs[2].contains(point)) {
+            boolean rembool = quadNodes[2].remove(point);
+            if (rembool) {
+                //Child was deleted
+                quadNodes[2] = null;
+                return hasNoChildren();
+            } else {
+                return false;
+            }
+        }
+        if (quadNodes[3] != null && subs[3].contains(point)) {
+            boolean rembool = quadNodes[3].remove(point);
+            if (rembool) {
+                //Child was deleted
+                quadNodes[3] = null;
+                return hasNoChildren();
+            } else {
+                return false;
             }
         }
 
         return false;
+
     }
 
-    private void cleanup() {
-        int nonNullChildren = 0;
-        QuadTree singleChild = null;
+    public boolean hasNoChildren() {
 
-        for (QuadTree child : quadNodes) {
-            if (child != null) {
-                nonNullChildren++;
-                singleChild = child;
+        if (quadNodes == null) {
+            return true;
+        }
+        for (QuadTree node : quadNodes) {
+            if (node != null) {
+                return false;
             }
         }
+        return true;
 
-        if (nonNullChildren == 0) {
-            // All child nodes are null, this node is now effectively empty
-            for (int i = 0; i < quadNodes.length; i++) {
-                quadNodes[i] = null;
-            }
-        } else if (nonNullChildren == 1 && singleChild instanceof QuadLeaf) {
-            // Only one child node and it is a leaf, replace this node with the leaf
-            this.bounds = singleChild.bounds;
-            this.quadNodes = singleChild.quadNodes;
-        } else {
-            // More than one child node, or single child is not a leaf, recursively cleanup child nodes
-            for (QuadTree child : quadNodes) {
-                if (child != null) {
-                    child.cleanup();
-                }
-            }
-        }
     }
 
 
 
     public UUID query(Point point) {
-
-        Bukkit.getConsoleSender().sendMessage("Depth: " + depth + ", Width: " + (bounds.top - bounds.bottom));
 
         if (!bounds.contains(point)) throw new IllegalStateException("Point is not within boundary");
 

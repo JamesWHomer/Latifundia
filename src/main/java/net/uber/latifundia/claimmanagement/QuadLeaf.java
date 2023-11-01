@@ -1,5 +1,7 @@
 package net.uber.latifundia.claimmanagement;
 
+import org.bukkit.Bukkit;
+
 import java.awt.*;
 import java.util.UUID;
 
@@ -14,14 +16,14 @@ public class QuadLeaf extends QuadTree {
         this.owner = owner;
     }
 
-    public boolean insert(UUID owner) {
-        this.owner = owner;
-        return true;
-    }
-
     @Override
     public UUID query(Point point) {
         return this.owner;
+    }
+
+    @Override
+    public boolean remove(Point point) {
+        return true;
     }
 
 }
