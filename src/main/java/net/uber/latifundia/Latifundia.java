@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class Latifundia extends JavaPlugin implements Listener {
 
     private WorldTreeManager worldTreeManager;
+    private PlayerStalker playerStalker;
 
     @Override
     public void onEnable() {
@@ -22,6 +23,10 @@ public final class Latifundia extends JavaPlugin implements Listener {
         this.getCommand("latifundia").setTabCompleter(new LatifundiaTabCompleter());
 
         getServer().getPluginManager().registerEvents(this, this);
+
+        playerStalker = new PlayerStalker(worldTreeManager);
+
+        getServer().getPluginManager().registerEvents(playerStalker, this);
 
     }
 
