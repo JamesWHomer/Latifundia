@@ -34,7 +34,7 @@ public final class Latifundia extends JavaPlugin implements Listener {
     @EventHandler
     public void onWorldSave(WorldSaveEvent event) {
         // Save data on world save
-        worldTreeManager.saveAllWorldTrees();
+        worldTreeManager.saveAllWorldTreesAsync();
     }
 
     public WorldTreeManager getWorldTreeManager() {

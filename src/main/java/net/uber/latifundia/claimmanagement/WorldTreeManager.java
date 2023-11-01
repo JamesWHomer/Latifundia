@@ -9,6 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.function.Consumer;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -44,6 +46,43 @@ public class WorldTreeManager {
         }
     }
 
+    public void loadAllWorldTreesAsync(Runnable callback) {
+        File dataFolder = new File(plugin.getDataFolder(), "worldTrees");
+        if (!dataFolder.exists()) {
+            dataFolder.mkdirs();
+        }
+
+        File[] worldFiles = dataFolder.listFiles((dir, name) -> name.endsWith(".ser"));
+        if (worldFiles == null || worldFiles.length == 0) {
+            callback.run();
+            return;
+        }
+
+        CountDownLatch latch = new CountDownLatch(worldFiles.length);
+        for (File worldFile : worldFiles) {
+            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+                try {
+                    String worldName = worldFile.getName().replace(".ser", "");
+                    WorldTree worldTree = loadWorldTree(worldFile.getAbsolutePath());
+                    worldTrees.put(worldName, worldTree);
+                } catch (IOException | ClassNotFoundException e) {
+                    plugin.getLogger().severe("Could not load WorldTree asynchronously for world: " + worldFile.getName());
+                    e.printStackTrace();
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            try {
+                latch.await();
+                plugin.getServer().getScheduler().runTask(plugin, callback);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
+    }
 
     public WorldTree getWorldTree(World world) {
 
@@ -79,16 +118,48 @@ public class WorldTreeManager {
         }
     }
 
+    public void saveAllWorldTreesAsync() {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            saveAllWorldTrees();
+        });
+    }
+
+
     public void saveWorldTree(WorldTree worldTree, String filepath) throws IOException {
         try (ObjectOutputStream out = new ObjectOutputStream(new GZIPOutputStream(Files.newOutputStream(Paths.get(filepath))))) {
             out.writeObject(worldTree);
         }
     }
 
+    public void saveWorldTreeAsync(WorldTree worldTree, String filepath) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            try {
+                saveWorldTree(worldTree, filepath);
+            } catch (IOException e) {
+                plugin.getLogger().severe("Could not save WorldTree asynchronously");
+                e.printStackTrace();
+            }
+        });
+    }
+
+
     public WorldTree loadWorldTree(String filepath) throws IOException, ClassNotFoundException {
         try (ObjectInputStream in = new ObjectInputStream(new GZIPInputStream(Files.newInputStream(Paths.get(filepath))))) {
             return (WorldTree) in.readObject();
         }
     }
+
+    public void loadWorldTreeAsync(String filepath, Consumer<WorldTree> callback) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            try {
+                WorldTree worldTree = loadWorldTree(filepath);
+                plugin.getServer().getScheduler().runTask(plugin, () -> callback.accept(worldTree));
+            } catch (IOException | ClassNotFoundException e) {
+                plugin.getLogger().severe("Could not load WorldTree asynchronously");
+                e.printStackTrace();
+            }
+        });
+    }
+
 
 }
