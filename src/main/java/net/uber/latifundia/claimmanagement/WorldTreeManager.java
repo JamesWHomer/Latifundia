@@ -44,7 +44,12 @@ public class WorldTreeManager {
 
 
     public WorldTree getWorldTree(World world) {
-        return worldTrees.computeIfAbsent(world.getName(), WorldTree::new);
+
+        if (!worldTrees.containsKey(world.getName())) {
+            worldTrees.put(world.getName(), new WorldTree(world.getName()));
+        }
+        return worldTrees.get(world.getName());
+
     }
 
     public void addWorldTree(World world, WorldTree worldTree) {
