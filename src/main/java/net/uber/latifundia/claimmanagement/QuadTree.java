@@ -3,9 +3,11 @@ package net.uber.latifundia.claimmanagement;
 import org.bukkit.Bukkit;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.UUID;
 
-public class QuadTree {
+public class QuadTree implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private int depth;
     private QuadTree[] quadNodes;

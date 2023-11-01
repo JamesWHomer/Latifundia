@@ -1,8 +1,11 @@
 package net.uber.latifundia.claimmanagement;
 
 import java.awt.*;
+import java.io.Serializable;
 
-public class Boundary {
+public class Boundary implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     public int left, right, top, bottom;
 
     public Boundary(int left, int right, int top, int bottom) {
