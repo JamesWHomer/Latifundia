@@ -7,172 +7,87 @@ import java.util.UUID;
 
 public class QuadTree {
 
-    int depth;
-    QuadTree[] quadNodes;
-    Boundary bounds;
-
+    private int depth;
+    private QuadTree[] quadNodes;
+    private Boundary bounds;
 
     public QuadTree(Boundary bounds, int depth) {
-
         this.bounds = bounds;
         this.depth = depth;
-        quadNodes = new QuadTree[4];
-
+        this.quadNodes = new QuadTree[4];
     }
 
     public boolean insert(Point point, UUID owner) {
-
         if (!bounds.contains(point)) return false;
 
-        Boundary[] subs = bounds.subdivide();
-
-        if (subs[0].contains(point)) {
-            return insertIndex(0, point, owner, subs[0]);
-        }
-        if (subs[1].contains(point)) {
-            return insertIndex(1, point, owner, subs[1]);
-        }
-        if (subs[2].contains(point)) {
-            return insertIndex(2, point, owner, subs[2]);
-        }
-        if (subs[3].contains(point)) {
-            return insertIndex(3, point, owner, subs[3]);
+        if (isLeafNode()) {
+            quadNodes[getIndex(point)] = new QuadLeaf(point, owner, depth);
+            return true;
         }
 
-        return false;
-
+        return insertAtSubNode(point, owner);
     }
 
-    private boolean insertIndex(int index, Point point, UUID owner, Boundary subbound) {
+    private boolean insertAtSubNode(Point point, UUID owner) {
+        int index = getIndex(point);
+        Boundary subBoundary = bounds.subdivide()[index];
 
-        if ((bounds.top - bounds.bottom) == 2) {
-            // Leaf Node
-
-            quadNodes[index] = new QuadLeaf(point, owner, depth);
-            return true;
-
-        } else {
-
-            if (quadNodes[index] == null) {
-                quadNodes[index] = new QuadTree(subbound, depth + 1);
-            }
-
-            return quadNodes[index].insert(point, owner);
-
+        if (quadNodes[index] == null) {
+            quadNodes[index] = new QuadTree(subBoundary, depth + 1);
         }
-
+        return quadNodes[index].insert(point, owner);
     }
 
     public boolean remove(Point point) {
-
         if (!bounds.contains(point)) throw new IllegalStateException("Point is not within boundary");
 
-        Boundary[] subs = bounds.subdivide();
-
-        if (quadNodes[0] != null && subs[0].contains(point)) {
-            boolean rembool = quadNodes[0].remove(point);
-            if (rembool) {
-                //Child was deleted
-                quadNodes[0] = null;
-                return hasNoChildren();
-            } else {
-                return false;
-            }
-        }
-        if (quadNodes[1] != null && subs[1].contains(point)) {
-            boolean rembool = quadNodes[1].remove(point);
-            if (rembool) {
-                //Child was deleted
-                quadNodes[1] = null;
-                return hasNoChildren();
-            } else {
-                return false;
-            }
-        }
-        if (quadNodes[2] != null && subs[2].contains(point)) {
-            boolean rembool = quadNodes[2].remove(point);
-            if (rembool) {
-                //Child was deleted
-                quadNodes[2] = null;
-                return hasNoChildren();
-            } else {
-                return false;
-            }
-        }
-        if (quadNodes[3] != null && subs[3].contains(point)) {
-            boolean rembool = quadNodes[3].remove(point);
-            if (rembool) {
-                //Child was deleted
-                quadNodes[3] = null;
-                return hasNoChildren();
-            } else {
-                return false;
-            }
+        int index = getIndex(point);
+        QuadTree subNode = quadNodes[index];
+        if (subNode != null && subNode.remove(point)) {
+            quadNodes[index] = null;
+            return hasNoChildren();
         }
 
         return false;
-
     }
 
     public boolean hasNoChildren() {
-
-        if (quadNodes == null) {
-            return true;
-        }
         for (QuadTree node : quadNodes) {
-            if (node != null) {
-                return false;
-            }
+            if (node != null) return false;
         }
         return true;
-
     }
-
-
 
     public UUID query(Point point) {
-
         if (!bounds.contains(point)) throw new IllegalStateException("Point is not within boundary");
 
-        if ((bounds.top - bounds.bottom) <= 2) {
-            // Leaf Node
+        if (isLeafNode()) return queryInLeafNode(point);
 
-            Boundary[] subs = bounds.subdivide();
-
-            if (quadNodes[0] != null && subs[0].contains(point)) {
-                return quadNodes[0].query(point);
-            }
-            if (quadNodes[1] != null && subs[1].contains(point)) {
-                return quadNodes[1].query(point);
-            }
-            if (quadNodes[2] != null && subs[2].contains(point)) {
-                return quadNodes[2].query(point);
-            }
-            if (quadNodes[3] != null && subs[3].contains(point)) {
-                return quadNodes[3].query(point);
-            }
-
-            return null;
-
-        }
-
-        Boundary[] subs = bounds.subdivide();
-
-        if (quadNodes[0] != null && subs[0].contains(point)) {
-            return quadNodes[0].query(point);
-        }
-        if (quadNodes[1] != null && subs[1].contains(point)) {
-            return quadNodes[1].query(point);
-        }
-        if (quadNodes[2] != null && subs[2].contains(point)) {
-            return quadNodes[2].query(point);
-        }
-        if (quadNodes[3] != null && subs[3].contains(point)) {
-            return quadNodes[3].query(point);
-        }
-
-        return null;
-
+        int index = getIndex(point);
+        QuadTree subNode = quadNodes[index];
+        return (subNode != null) ? subNode.query(point) : null;
     }
 
+    private UUID queryInLeafNode(Point point) {
+        for (int i = 0; i < quadNodes.length; i++) {
+            QuadTree subNode = quadNodes[i];
+            if (subNode != null && bounds.subdivide()[i].contains(point)) {
+                return subNode.query(point);
+            }
+        }
+        return null;
+    }
+
+    private boolean isLeafNode() {
+        return (bounds.top - bounds.bottom) <= 2;
+    }
+
+    private int getIndex(Point point) {
+        Boundary[] subBoundaries = bounds.subdivide();
+        for (int i = 0; i < subBoundaries.length; i++) {
+            if (subBoundaries[i].contains(point)) return i;
+        }
+        throw new IllegalStateException("Point is not within any sub-boundary");
+    }
 }
+
