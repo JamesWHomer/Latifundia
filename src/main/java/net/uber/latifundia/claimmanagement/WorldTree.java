@@ -8,7 +8,6 @@ public class WorldTree implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private QuadTree headNode;
-    private String world;
 
     /**
      * Initialize a new world tree
@@ -17,7 +16,6 @@ public class WorldTree implements Serializable {
     public WorldTree(String world) {
 
         this.headNode = new QuadTree(new Boundary(-2097152, 2097152, 2097152, -2097152), 0);
-        this.world = world;
 
     }
 

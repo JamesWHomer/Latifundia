@@ -9,6 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public class WorldTreeManager {
 
@@ -46,14 +48,14 @@ public class WorldTreeManager {
     public WorldTree getWorldTree(World world) {
 
         if (!worldTrees.containsKey(world.getName())) {
-            worldTrees.put(world.getName(), new WorldTree(world.getName()));
+            this.createWorldTree(world);
         }
         return worldTrees.get(world.getName());
 
     }
 
-    public void addWorldTree(World world, WorldTree worldTree) {
-        worldTrees.put(world.getName(), worldTree);
+    public void createWorldTree(World world) {
+        worldTrees.put(world.getName(), new WorldTree());
     }
 
     public void removeWorldTree(World world) {
@@ -77,14 +79,14 @@ public class WorldTreeManager {
         }
     }
 
-    public void saveWorldTree(WorldTree worldTree, String filename) throws IOException {
-        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(Paths.get(filename)))) {
+    public void saveWorldTree(WorldTree worldTree, String filepath) throws IOException {
+        try (ObjectOutputStream out = new ObjectOutputStream(new GZIPOutputStream(Files.newOutputStream(Paths.get(filepath))))) {
             out.writeObject(worldTree);
         }
     }
 
-    public WorldTree loadWorldTree(String filename) throws IOException, ClassNotFoundException {
-        try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(Paths.get(filename)))) {
+    public WorldTree loadWorldTree(String filepath) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream in = new ObjectInputStream(new GZIPInputStream(Files.newInputStream(Paths.get(filepath))))) {
             return (WorldTree) in.readObject();
         }
     }
