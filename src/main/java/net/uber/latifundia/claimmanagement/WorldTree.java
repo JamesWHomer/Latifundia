@@ -1,5 +1,7 @@
 package net.uber.latifundia.claimmanagement;
 
+import org.bukkit.Bukkit;
+
 import java.awt.*;
 import java.io.Serializable;
 import java.util.UUID;
