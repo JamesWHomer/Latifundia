@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.awt.*;
 import java.util.*;
@@ -17,7 +18,9 @@ public class PlayerStalker implements Listener {
 
     private WorldTreeManager worldTreeManager;
 
+    // The last known chunk of the player
     Map<UUID, Point> playerChunkLocation = new HashMap<>();
+    // To make sure that there isn't a notification every time the player changes chunks
     Map<UUID, UUID> lastNotifiedOwner = new HashMap<>();
 
     public PlayerStalker(WorldTreeManager worldTreeManager) {
@@ -41,6 +44,16 @@ public class PlayerStalker implements Listener {
         Player player = event.getPlayer();
 
         updatePlayer(player);
+
+    }
+
+    @EventHandler
+    public void playerQuit(PlayerQuitEvent event) {
+
+        Player player = event.getPlayer();
+
+        playerChunkLocation.remove(player.getUniqueId());
+        lastNotifiedOwner.remove(player.getUniqueId());
 
     }
 
