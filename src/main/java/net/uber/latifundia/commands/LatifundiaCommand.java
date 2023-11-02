@@ -1,6 +1,7 @@
 package net.uber.latifundia.commands;
 
 import net.uber.latifundia.Latifundia;
+import net.uber.latifundia.PlayerStalker;
 import net.uber.latifundia.claimmanagement.WorldTree;
 import net.uber.latifundia.claimmanagement.WorldTreeManager;
 import org.bukkit.command.Command;
@@ -13,6 +14,12 @@ import java.sql.Time;
 import java.time.Instant;
 
 public class LatifundiaCommand implements CommandExecutor {
+
+    private PlayerStalker playerStalker;
+
+    public LatifundiaCommand(PlayerStalker playerStalker) {
+        this.playerStalker = playerStalker;
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -68,6 +75,8 @@ public class LatifundiaCommand implements CommandExecutor {
         long end = System.currentTimeMillis();
         player.sendMessage("Time (ms): " + (end - start));
 
+        this.playerStalker.updateChunk(playerChunk);
+
     }
 
     private void handleUnclaim(Player player, String[] args) {
@@ -86,6 +95,8 @@ public class LatifundiaCommand implements CommandExecutor {
         long end = System.currentTimeMillis();
         player.sendMessage("Time (ms): " + (end - start));
 
+        this.playerStalker.updateChunk(playerChunk);
+
     }
 
     private void handleInfo(Player player, String[] args) {
@@ -102,6 +113,7 @@ public class LatifundiaCommand implements CommandExecutor {
 
         long end = System.currentTimeMillis();
         player.sendMessage("Time (ms): " + (end - start));
+
     }
 
     private void handleCityState(Player player, String[] args) {

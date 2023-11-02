@@ -21,7 +21,7 @@ public class PlayerStalker implements Listener {
     // The last known chunk of the player
     Map<UUID, Point> playerChunkLocation = new HashMap<>();
     // To make sure that there isn't a notification every time the player changes chunks
-    Map<UUID, UUID> lastNotifiedOwner = new HashMap<>();
+    Map<UUID, UUID> lastChunksOwner = new HashMap<>();
 
     public PlayerStalker(WorldTreeManager worldTreeManager) {
 
@@ -53,55 +53,56 @@ public class PlayerStalker implements Listener {
         Player player = event.getPlayer();
 
         playerChunkLocation.remove(player.getUniqueId());
-        lastNotifiedOwner.remove(player.getUniqueId());
+        lastChunksOwner.remove(player.getUniqueId());
 
     }
 
     public boolean updatePlayer(Player player) {
-
         Point chunk = new Point(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
+        UUID playerUUID = player.getUniqueId();
 
-        if (!playerChunkLocation.containsKey(player.getUniqueId())) {
-            playerChunkLocation.put(player.getUniqueId(), chunk);
-            lastNotifiedOwner.put(player.getUniqueId(), getChunkOwner(player.getWorld(), chunk));
-            return false;
+        // Update the player's chunk location
+        playerChunkLocation.put(playerUUID, chunk);
+
+        // Get the owner of the current chunk
+        UUID thisChunkOwner = getChunkOwner(player.getWorld(), chunk);
+
+        // Check if the chunk owner has changed
+        UUID lastChunkOwner = lastChunksOwner.get(playerUUID);
+        if ((thisChunkOwner == null ? lastChunkOwner != null : !thisChunkOwner.equals(lastChunkOwner))) {
+            // The chunk owner is different (or the player is entering a chunk for the first time)
+            lastChunksOwner.put(playerUUID, thisChunkOwner);
+            notifyPlayer(player, thisChunkOwner);
+            return true;
         }
 
-        if (playerChunkLocation.get(player.getUniqueId()) == chunk) return false;
-
-        // Passed checks and this means that the player is in a new chunk.
-
-        UUID owner = getChunkOwner(player.getWorld(), chunk);
-
-        playerChunkLocation.put(player.getUniqueId(), chunk);
-
-        if (lastNotifiedOwner.get(player.getUniqueId()) == owner) {
-            return false;
-        }
-
-        // Passed chunks and this means the player has not been notified of change yet.
-
-        String ownerName;
-
-        if (owner == null) {
-            ownerName = "&cUnclaimed Lands";
-        } else {
-            ownerName = "&7" + Bukkit.getPlayer(owner).getName();
-        }
-
-        notifyPlayer(player, ownerName);
-
-        lastNotifiedOwner.put(player.getUniqueId(), owner);
-
-        return true;
-
+        // The chunk owner has not changed
+        return false;
     }
+
 
     public void updateChunk(Point chunk) {
 
-        //Not finished yet.
+        // Collect UUIDs and remove entries
+        Set<UUID> matchingUUIDs = new HashSet<>();
+        Iterator<Map.Entry<UUID, Point>> iterator = playerChunkLocation.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<UUID, Point> entry = iterator.next();
+            if (entry.getValue().equals(chunk)) {
+                matchingUUIDs.add(entry.getKey());
+                iterator.remove();
+            }
+        }
 
-        GeneralUtils.removeEntries(playerChunkLocation, chunk);
+        for (UUID pUUID : matchingUUIDs) {
+
+            Player player = Bukkit.getPlayer(pUUID);
+
+            if (player == null) return;
+
+            updatePlayer(player);
+
+        }
 
     }
 
@@ -111,7 +112,21 @@ public class PlayerStalker implements Listener {
 
     }
 
-    private void notifyPlayer(Player player, String title) {
+    private void notifyPlayer(Player player, UUID owner) {
+
+        String ownerName;
+
+        if (owner == null) {
+            ownerName = "&cUnclaimed Lands";
+        } else {
+            ownerName = "&7" + Bukkit.getPlayer(owner).getName();
+        }
+
+        sendTitle(player, ownerName);
+
+    }
+
+    private void sendTitle(Player player, String title) {
 
         String message = ChatColor.translateAlternateColorCodes('&', title);
 
