@@ -71,9 +71,9 @@ public class QuadTree implements Serializable {
     }
 
     private UUID queryInLeafNode(Point point) {
-        for (int i = 0; i < quadNodes.length; i++) {
-            QuadTree subNode = quadNodes[i];
-            if (subNode != null && bounds.subdivide()[i].contains(point)) {
+        for (QuadTree quadNode : quadNodes) {
+            QuadLeaf subNode = (QuadLeaf) quadNode;
+            if (subNode != null && subNode.isPoint(point)) {
                 return subNode.query(point);
             }
         }

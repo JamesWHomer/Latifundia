@@ -28,4 +28,8 @@ public class QuadLeaf extends QuadTree implements Serializable {
         return true;
     }
 
+    public boolean isPoint(Point point) {
+        return this.point.equals(point);
+    }
+
 }
