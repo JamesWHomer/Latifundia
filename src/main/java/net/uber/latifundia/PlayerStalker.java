@@ -14,49 +14,67 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import java.awt.*;
 import java.util.*;
 
+/**
+ * This class handles player movements and interactions within different chunks
+ * in a Minecraft world, notifying them about the ownership status of the chunks.
+ */
 public class PlayerStalker implements Listener {
 
-    private WorldTreeManager worldTreeManager;
+    private final WorldTreeManager worldTreeManager;
 
-    // The last known chunk of the player
-    Map<UUID, Point> playerChunkLocation = new HashMap<>();
-    // To make sure that there isn't a notification every time the player changes chunks
-    Map<UUID, UUID> lastChunksOwner = new HashMap<>();
+    // Maps each player's UUID to their last known chunk location
+    private final Map<UUID, Point> playerChunkLocation = new HashMap<>();
 
+    // Maps each player's UUID to the UUID of the last chunk's owner
+    private final Map<UUID, UUID> lastChunksOwner = new HashMap<>();
+
+    /**
+     * Constructor for creating a PlayerStalker instance.
+     *
+     * @param worldTreeManager The manager for handling world trees.
+     */
     public PlayerStalker(WorldTreeManager worldTreeManager) {
-
         this.worldTreeManager = worldTreeManager;
-
     }
 
+    /**
+     * Event handler for player movement.
+     *
+     * @param event The event triggered when a player moves.
+     */
     @EventHandler
-    public void playerMoveEvent(PlayerMoveEvent event) {
-
-        Player player = event.getPlayer();
-
-        updatePlayer(player);
-
+    public void onPlayerMove(PlayerMoveEvent event) {
+        updatePlayer(event.getPlayer());
     }
 
+    /**
+     * Event handler for player joining the game.
+     *
+     * @param event The event triggered when a player joins the game.
+     */
     @EventHandler
-    public void playerJoin(PlayerJoinEvent event) {
-
-        Player player = event.getPlayer();
-
-        updatePlayer(player);
-
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        updatePlayer(event.getPlayer());
     }
 
+    /**
+     * Event handler for player quitting the game.
+     *
+     * @param event The event triggered when a player quits the game.
+     */
     @EventHandler
-    public void playerQuit(PlayerQuitEvent event) {
-
-        Player player = event.getPlayer();
-
-        playerChunkLocation.remove(player.getUniqueId());
-        lastChunksOwner.remove(player.getUniqueId());
-
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        UUID playerUUID = event.getPlayer().getUniqueId();
+        playerChunkLocation.remove(playerUUID);
+        lastChunksOwner.remove(playerUUID);
     }
 
+    /**
+     * Updates the chunk location and ownership status for a given player.
+     *
+     * @param player The player to be updated.
+     * @return true if the chunk owner has changed, false otherwise.
+     */
     public boolean updatePlayer(Player player) {
         Point chunk = new Point(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
         UUID playerUUID = player.getUniqueId();
@@ -69,7 +87,7 @@ public class PlayerStalker implements Listener {
 
         // Check if the chunk owner has changed
         UUID lastChunkOwner = lastChunksOwner.get(playerUUID);
-        if ((thisChunkOwner == null ? lastChunkOwner != null : !thisChunkOwner.equals(lastChunkOwner))) {
+        if (!Objects.equals(thisChunkOwner, lastChunkOwner)) {
             // The chunk owner is different (or the player is entering a chunk for the first time)
             lastChunksOwner.put(playerUUID, thisChunkOwner);
             notifyPlayer(player, thisChunkOwner);
@@ -80,61 +98,65 @@ public class PlayerStalker implements Listener {
         return false;
     }
 
-
+    /**
+     * Updates the ownership status for all players in a given chunk.
+     *
+     * @param chunk The chunk to be updated.
+     */
     public void updateChunk(Point chunk) {
-
-        // Collect UUIDs and remove entries
+        // Collect UUIDs of players in the chunk and remove their entries
         Set<UUID> matchingUUIDs = new HashSet<>();
-        Iterator<Map.Entry<UUID, Point>> iterator = playerChunkLocation.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<UUID, Point> entry = iterator.next();
+        playerChunkLocation.entrySet().removeIf(entry -> {
             if (entry.getValue().equals(chunk)) {
                 matchingUUIDs.add(entry.getKey());
-                iterator.remove();
+                return true;
+            }
+            return false;
+        });
+
+        // Update each player in the chunk
+        for (UUID pUUID : matchingUUIDs) {
+            Player player = Bukkit.getPlayer(pUUID);
+            if (player != null) {
+                updatePlayer(player);
             }
         }
-
-        for (UUID pUUID : matchingUUIDs) {
-
-            Player player = Bukkit.getPlayer(pUUID);
-
-            if (player == null) return;
-
-            updatePlayer(player);
-
-        }
-
     }
 
+    /**
+     * Retrieves the UUID of the owner of a chunk in a specific world.
+     *
+     * @param world The world containing the chunk.
+     * @param chunk The chunk whose owner is to be retrieved.
+     * @return The UUID of the owner of the chunk, or null if unclaimed.
+     */
     private UUID getChunkOwner(World world, Point chunk) {
-
         return worldTreeManager.getWorldTree(world).queryClaim(chunk);
-
     }
 
+    /**
+     * Sends a notification to a player about the ownership status of their current chunk.
+     *
+     * @param player The player to notify.
+     * @param owner The UUID of the owner of the chunk, or null if unclaimed.
+     */
     private void notifyPlayer(Player player, UUID owner) {
-
-        String ownerName;
-
-        if (owner == null) {
-            ownerName = "&cUnclaimed Lands";
-        } else {
-            ownerName = "&7" + Bukkit.getPlayer(owner).getName();
-        }
-
+        String ownerName = (owner == null) ? "&cUnclaimed Lands" : "&7" + Bukkit.getPlayer(owner).getName();
         sendTitle(player, ownerName);
-
     }
 
+    /**
+     * Sends a title message to a player.
+     *
+     * @param player The player to send the title to.
+     * @param title The title message.
+     */
     private void sendTitle(Player player, String title) {
-
         String message = ChatColor.translateAlternateColorCodes('&', title);
-
         int fadeIn = 5;
         int stay = 15;
         int fadeOut = 10;
         player.sendTitle(message, "", fadeIn, stay, fadeOut);
-
     }
-
 }
+
