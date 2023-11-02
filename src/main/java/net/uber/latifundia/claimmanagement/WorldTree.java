@@ -11,15 +11,10 @@ public class WorldTree implements Serializable {
 
     /**
      * Initialize a new world tree
-     * @param world Specify world
      */
-    public WorldTree(String world) {
+    public WorldTree() {
 
         this.headNode = new QuadTree(new Boundary(-2097152, 2097152, 2097152, -2097152), 0);
-
-    }
-
-    public WorldTree() {
 
     }
 
