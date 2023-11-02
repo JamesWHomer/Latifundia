@@ -33,7 +33,7 @@ public class WorldTreeManager {
         }
 
         for (World world : plugin.getServer().getWorlds()) {
-            File worldFile = new File(dataFolder, world.getName() + ".ser");
+            File worldFile = new File(dataFolder, world.getName() + ".worldtree");
             if (worldFile.exists()) {
                 try {
                     WorldTree worldTree = loadWorldTree(worldFile.getAbsolutePath());
@@ -52,7 +52,7 @@ public class WorldTreeManager {
             dataFolder.mkdirs();
         }
 
-        File[] worldFiles = dataFolder.listFiles((dir, name) -> name.endsWith(".ser"));
+        File[] worldFiles = dataFolder.listFiles((dir, name) -> name.endsWith(".worldtree"));
         if (worldFiles == null || worldFiles.length == 0) {
             callback.run();
             return;
@@ -62,7 +62,7 @@ public class WorldTreeManager {
         for (File worldFile : worldFiles) {
             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
                 try {
-                    String worldName = worldFile.getName().replace(".ser", "");
+                    String worldName = worldFile.getName().replace(".worldtree", "");
                     WorldTree worldTree = loadWorldTree(worldFile.getAbsolutePath());
                     worldTrees.put(worldName, worldTree);
                 } catch (IOException | ClassNotFoundException e) {
@@ -109,7 +109,7 @@ public class WorldTreeManager {
 
         for (Map.Entry<String, WorldTree> entry : worldTrees.entrySet()) {
             try {
-                File worldFile = new File(dataFolder, entry.getKey() + ".ser");
+                File worldFile = new File(dataFolder, entry.getKey() + ".worldtree");
                 saveWorldTree(entry.getValue(), worldFile.getAbsolutePath());
             } catch (IOException e) {
                 plugin.getLogger().severe("Could not save WorldTree for world " + entry.getKey());
