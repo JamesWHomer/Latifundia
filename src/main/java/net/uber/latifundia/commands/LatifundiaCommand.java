@@ -67,7 +67,13 @@ public class LatifundiaCommand implements CommandExecutor {
 
         Point playerChunk = new Point(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
 
-        player.sendMessage("Claimed: " + worldTree.insertClaim(playerChunk, player.getUniqueId()));
+        boolean successful = worldTree.insertClaim(playerChunk, player.getUniqueId());
+
+        if (successful) {
+            player.sendMessage("Chunk successfully claimed.");
+        } else {
+            player.sendMessage("Chunk could not be claimed.");
+        }
 
         this.playerStalker.updateChunk(playerChunk);
 
