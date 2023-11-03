@@ -4,6 +4,7 @@ import net.uber.latifundia.Latifundia;
 import net.uber.latifundia.PlayerStalker;
 import net.uber.latifundia.claimmanagement.WorldTree;
 import net.uber.latifundia.claimmanagement.WorldTreeManager;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -12,6 +13,7 @@ import org.bukkit.entity.Player;
 import java.awt.*;
 import java.sql.Time;
 import java.time.Instant;
+import java.util.UUID;
 
 public class LatifundiaCommand implements CommandExecutor {
 
@@ -91,7 +93,14 @@ public class LatifundiaCommand implements CommandExecutor {
 
         Point playerChunk = new Point(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
 
-        player.sendMessage("Owner: " + worldTree.queryClaim(playerChunk));
+        UUID ownerUUID = worldTree.queryClaim(playerChunk);
+
+        if (ownerUUID == null) {
+            player.sendMessage("Chunk is unclaimed.");
+        } else {
+            String owner = Bukkit.getOfflinePlayer(ownerUUID).getName();
+            player.sendMessage("Owner: " + owner);
+        }
 
     }
 
