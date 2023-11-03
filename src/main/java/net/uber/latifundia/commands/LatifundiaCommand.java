@@ -60,11 +60,6 @@ public class LatifundiaCommand implements CommandExecutor {
 
     private void handleClaim(Player player, String[] args) {
 
-        long start = System.currentTimeMillis();
-
-        // Implementation of claim command
-        player.sendMessage("Claiming land...");
-
         WorldTreeManager worldTreeManager = Latifundia.getPlugin(Latifundia.class).getWorldTreeManager();
         WorldTree worldTree = worldTreeManager.getWorldTree(player.getWorld());
 
@@ -72,18 +67,11 @@ public class LatifundiaCommand implements CommandExecutor {
 
         player.sendMessage("Claimed: " + worldTree.insertClaim(playerChunk, player.getUniqueId()));
 
-        long end = System.currentTimeMillis();
-        player.sendMessage("Time (ms): " + (end - start));
-
         this.playerStalker.updateChunk(playerChunk);
 
     }
 
     private void handleUnclaim(Player player, String[] args) {
-        long start = System.currentTimeMillis();
-
-        // Implementation of unclaim command
-        player.sendMessage("Unclaiming land...");
 
         WorldTreeManager worldTreeManager = Latifundia.getPlugin(Latifundia.class).getWorldTreeManager();
         WorldTree worldTree = worldTreeManager.getWorldTree(player.getWorld());
@@ -92,27 +80,18 @@ public class LatifundiaCommand implements CommandExecutor {
 
         player.sendMessage("Unclaimed: " + worldTree.removeClaim(playerChunk));
 
-        long end = System.currentTimeMillis();
-        player.sendMessage("Time (ms): " + (end - start));
-
         this.playerStalker.updateChunk(playerChunk);
 
     }
 
     private void handleInfo(Player player, String[] args) {
-        long start = System.currentTimeMillis();
-        // Implementation of info command
 
         WorldTreeManager worldTreeManager = Latifundia.getPlugin(Latifundia.class).getWorldTreeManager();
         WorldTree worldTree = worldTreeManager.getWorldTree(player.getWorld());
 
         Point playerChunk = new Point(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
 
-        player.sendMessage("Getting land information...");
         player.sendMessage("Owner: " + worldTree.queryClaim(playerChunk));
-
-        long end = System.currentTimeMillis();
-        player.sendMessage("Time (ms): " + (end - start));
 
     }
 
