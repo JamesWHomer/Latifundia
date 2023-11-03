@@ -120,6 +120,6 @@ public class LatifundiaCommand implements CommandExecutor {
 
     private void handleCityState(Player player, String[] args) {
         // Implementation of list command
-        player.sendMessage("Handling citystate...");
+        player.sendMessage("City state not implemented yet!");
     }
 }
