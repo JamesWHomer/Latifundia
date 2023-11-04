@@ -17,22 +17,13 @@ public class CityState implements Serializable {
     private List<Claim> claims = new ArrayList<>();
 
     /**
-     * Parses in .citystate file and loads CityState.
-     */
-    public CityState() {
-
-
-
-    }
-
-    /**
      * Creates new city state from scratch.
      * @param name Creates name of CityState
      * @param creator Clarifies who is Praetor
      */
-    public CityState(UUID uuid, String name, Player creator) {
+    public CityState(UUID cuuid, String name, Player creator) {
         this.name = name;
-        this.cityStateUUID = UUID.randomUUID();
+        this.cityStateUUID = cuuid;
         this.claims.add(new Claim(creator.getUniqueId(), creator.getLocation()));
         this.memberList.put(creator.getUniqueId(), Rank.LEADER);
     }
