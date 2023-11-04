@@ -34,14 +34,14 @@ public class CityState implements Serializable {
         this.name = name;
         this.cityStateUUID = UUID.randomUUID();
         this.claims.add(new Claim(creator.getUniqueId(), creator.getLocation()));
-        this.memberList.put(creator.getUniqueId(), Rank.CONSUL);
+        this.memberList.put(creator.getUniqueId(), Rank.LEADER);
     }
 
     enum Rank {
-        IMPERATOR,
-        CONSUL,
-        LICTOR,
-        PLEBIAN
+        LEADER,
+        COLEADER,
+        COMMANDER,
+        CITIZEN
     }
 
 }
