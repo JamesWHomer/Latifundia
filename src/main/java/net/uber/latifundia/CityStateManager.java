@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.zip.GZIPInputStream;
 
 public class CityStateManager {
@@ -54,6 +55,18 @@ public class CityStateManager {
         try (ObjectInputStream in = new ObjectInputStream(new GZIPInputStream(Files.newInputStream(Paths.get(filepath))))) {
             return (CityState) in.readObject();
         }
+    }
+
+    public void loadCityStateAsync(String filepath, Consumer<CityState> callback) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            try {
+                CityState cityState = loadCityState(filepath);
+                plugin.getServer().getScheduler().runTask(plugin, () -> callback.accept(cityState));
+            } catch (IOException | ClassNotFoundException e) {
+                plugin.getLogger().severe("Could not load CityState asynchronously");
+                e.printStackTrace();
+            }
+        });
     }
 
     public void saveCityState(CityState cityState) {
