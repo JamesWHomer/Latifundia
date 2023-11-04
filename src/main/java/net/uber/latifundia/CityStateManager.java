@@ -1,11 +1,15 @@
 package net.uber.latifundia;
 
-import net.uber.latifundia.claimmanagement.WorldTree;
+import net.uber.latifundia.claimmanagement.CityState;
+import net.uber.latifundia.claimmanagement.CityState;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -13,6 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public class CityStateManager {
 
@@ -45,12 +50,6 @@ public class CityStateManager {
 
     }
 
-    public void loadAllCityStates() {
-
-
-
-    }
-
     public CityState loadCityState(String filepath) throws IOException, ClassNotFoundException {
         try (ObjectInputStream in = new ObjectInputStream(new GZIPInputStream(Files.newInputStream(Paths.get(filepath))))) {
             return (CityState) in.readObject();
@@ -69,16 +68,55 @@ public class CityStateManager {
         });
     }
 
-    public void saveCityState(CityState cityState) {
+    private void loadAllCityStates() {
+        File dataFolder = new File(plugin.getDataFolder(), "cityStates");
+        if (!dataFolder.exists()) {
+            dataFolder.mkdirs();
+        }
 
-
+        //Have not implemented yet
 
     }
 
-    public void saveAllCityStates(CityState cityState) {
+    public void saveAllCityStates() {
+        File dataFolder = new File(plugin.getDataFolder(), "cityStates");
+        if (!dataFolder.exists()) {
+            dataFolder.mkdirs();
+        }
+
+        for (Map.Entry<UUID, CityState> entry : cityStateMap.entrySet()) {
+            try {
+                File worldFile = new File(dataFolder, entry.getKey() + ".citystate");
+                saveCityState(entry.getValue(), worldFile.getAbsolutePath());
+            } catch (IOException e) {
+                plugin.getLogger().severe("Could not save CityState for world " + entry.getKey());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void saveAllCityStatesAsync() {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            saveAllCityStates();
+        });
+    }
 
 
+    public void saveCityState(CityState cityState, String filepath) throws IOException {
+        try (ObjectOutputStream out = new ObjectOutputStream(new GZIPOutputStream(Files.newOutputStream(Paths.get(filepath))))) {
+            out.writeObject(cityState);
+        }
+    }
 
+    public void saveCityStateAsync(CityState cityState, String filepath) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            try {
+                saveCityState(cityState, filepath);
+            } catch (IOException e) {
+                plugin.getLogger().severe("Could not save CityState asynchronously");
+                e.printStackTrace();
+            }
+        });
     }
 
 }
