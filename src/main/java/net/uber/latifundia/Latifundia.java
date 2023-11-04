@@ -36,12 +36,14 @@ public final class Latifundia extends JavaPlugin implements Listener {
     public void onDisable() {
         // Save data on shutdown
         worldTreeManager.saveAllWorldTrees();
+        cityStateManager.saveAllCityStates();
     }
 
     @EventHandler
     public void onWorldSave(WorldSaveEvent event) {
         // Save data on world save
         worldTreeManager.saveAllWorldTreesAsync();
+        cityStateManager.saveAllCityStatesAsync();
     }
 
     public WorldTreeManager getWorldTreeManager() {
