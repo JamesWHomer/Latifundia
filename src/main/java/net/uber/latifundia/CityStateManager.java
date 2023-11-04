@@ -33,9 +33,9 @@ public class CityStateManager {
 
     }
 
-    public void setCityState(CityState cityState) {
+    public void setCityState(UUID cuuid, CityState cityState) {
 
-
+        cityStateMap.put(cuuid, cityState);
 
     }
 
