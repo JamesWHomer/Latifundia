@@ -27,7 +27,9 @@ public class CityStateManager {
 
     public void createCityState(String name, Player creator) {
 
+        UUID cuuid = UUID.randomUUID();
 
+        cityStateMap.put(cuuid, new CityState(cuuid, name, creator));
 
     }
 

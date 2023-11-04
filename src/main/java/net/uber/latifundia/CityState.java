@@ -30,7 +30,7 @@ public class CityState implements Serializable {
      * @param name Creates name of CityState
      * @param creator Clarifies who is Praetor
      */
-    public CityState(String name, Player creator) {
+    public CityState(UUID uuid, String name, Player creator) {
         this.name = name;
         this.cityStateUUID = UUID.randomUUID();
         this.claims.add(new Claim(creator.getUniqueId(), creator.getLocation()));
