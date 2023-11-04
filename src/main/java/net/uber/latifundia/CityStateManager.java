@@ -4,9 +4,14 @@ import net.uber.latifundia.claimmanagement.WorldTree;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.zip.GZIPInputStream;
 
 public class CityStateManager {
 
@@ -45,10 +50,10 @@ public class CityStateManager {
 
     }
 
-    public CityState loadCityState(UUID cuuid) {
-
-        return null;
-
+    public CityState loadCityState(String filepath) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream in = new ObjectInputStream(new GZIPInputStream(Files.newInputStream(Paths.get(filepath))))) {
+            return (CityState) in.readObject();
+        }
     }
 
     public void saveCityState(CityState cityState) {
