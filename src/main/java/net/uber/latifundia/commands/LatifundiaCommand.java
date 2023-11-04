@@ -130,9 +130,8 @@ public class LatifundiaCommand implements CommandExecutor {
             player.sendMessage("Your City State: " + cityState.getName());
         } else {
             player.sendMessage("You are not a citizen of a city state.");
+            //Just for test
+            cityStateManager.createCityState("TestCity", player);
         }
-
-        //Just for test
-        cityStateManager.createCityState("TestCity", player);
     }
 }
