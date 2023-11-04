@@ -21,7 +21,7 @@ public class CityStateManager {
 
     public CityState getCityState(UUID cuuid) {
 
-        return null;
+        return cityStateMap.get(cuuid);
 
     }
 
