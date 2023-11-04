@@ -3,9 +3,11 @@ package net.uber.latifundia;
 import net.uber.latifundia.claimmanagement.Claim;
 import org.bukkit.entity.Player;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class CityState {
+public class CityState implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     // Planning on implementing Empires but not yet.
 
