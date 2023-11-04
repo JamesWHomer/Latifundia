@@ -28,7 +28,18 @@ public class CityStateManager {
     public CityStateManager(JavaPlugin plugin) {
 
         this.plugin = plugin;
+        loadAllCityStates();
 
+    }
+
+    public boolean doesCityExist(UUID cuuid) {
+
+        return cityStateMap.containsKey(cuuid);
+
+    }
+
+    public boolean isCitizen(Player player) {
+        return playerCityStateMap.containsKey(player.getUniqueId());
     }
 
     public CityState getCityState(UUID cuuid) {

@@ -124,7 +124,15 @@ public class LatifundiaCommand implements CommandExecutor {
 
     private void handleCityState(Player player, String[] args) {
         // Implementation of list command
-        CityState cityState = cityStateManager.getCityState(player);
-        player.sendMessage("Your City State: " + cityState.getName());
+
+        if (cityStateManager.isCitizen(player)) {
+            CityState cityState = cityStateManager.getCityState(player);
+            player.sendMessage("Your City State: " + cityState.getName());
+        } else {
+            player.sendMessage("You are not a citizen of a city state.");
+        }
+
+        //Just for test
+        cityStateManager.createCityState("TestCity", player);
     }
 }
