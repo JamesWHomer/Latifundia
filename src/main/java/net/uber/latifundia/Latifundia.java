@@ -12,6 +12,7 @@ public final class Latifundia extends JavaPlugin implements Listener {
 
     private WorldTreeManager worldTreeManager;
     private PlayerStalker playerStalker;
+    private CityStateManager cityStateManager;
 
     @Override
     public void onEnable() {
@@ -19,6 +20,8 @@ public final class Latifundia extends JavaPlugin implements Listener {
 
         worldTreeManager = new WorldTreeManager(this);
         playerStalker = new PlayerStalker(worldTreeManager);
+        cityStateManager = new CityStateManager(this);
+
 
         this.getCommand("latifundia").setExecutor(new LatifundiaCommand(playerStalker));
         this.getCommand("latifundia").setTabCompleter(new LatifundiaTabCompleter());
