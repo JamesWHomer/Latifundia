@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.zip.GZIPInputStream;
@@ -21,6 +22,8 @@ public class CityStateManager {
 
     private final JavaPlugin plugin;
     private final Map<UUID, CityState> cityStateMap = new HashMap<>();
+    //First value is player, second is the city
+    private final Map<UUID, UUID> playerCityStateMap = new HashMap<>();
 
     public CityStateManager(JavaPlugin plugin) {
 
@@ -31,6 +34,12 @@ public class CityStateManager {
     public CityState getCityState(UUID cuuid) {
 
         return cityStateMap.get(cuuid);
+
+    }
+
+    public CityState getCityState(Player player) {
+
+        return getCityState(playerCityStateMap.get(player.getUniqueId()));
 
     }
 
@@ -50,7 +59,12 @@ public class CityStateManager {
 
     public CityState loadCityState(String filepath) throws IOException, ClassNotFoundException {
         try (ObjectInputStream in = new ObjectInputStream(new GZIPInputStream(Files.newInputStream(Paths.get(filepath))))) {
-            return (CityState) in.readObject();
+            CityState cityState = (CityState) in.readObject();
+            Set<UUID> cityMembers = cityState.getMembers();
+            for (UUID pUUID : cityMembers) {
+                playerCityStateMap.put(pUUID, cityState.getCityStateUUID());
+            }
+            return cityState;
         }
     }
 

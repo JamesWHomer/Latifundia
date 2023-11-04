@@ -1,5 +1,7 @@
 package net.uber.latifundia.commands;
 
+import net.uber.latifundia.CityState;
+import net.uber.latifundia.CityStateManager;
 import net.uber.latifundia.Latifundia;
 import net.uber.latifundia.PlayerStalker;
 import net.uber.latifundia.claimmanagement.WorldTree;
@@ -18,9 +20,11 @@ import java.util.UUID;
 public class LatifundiaCommand implements CommandExecutor {
 
     private PlayerStalker playerStalker;
+    private CityStateManager cityStateManager;
 
-    public LatifundiaCommand(PlayerStalker playerStalker) {
+    public LatifundiaCommand(PlayerStalker playerStalker, CityStateManager cityStateManager) {
         this.playerStalker = playerStalker;
+        this.cityStateManager = cityStateManager;
     }
 
     @Override
@@ -120,6 +124,7 @@ public class LatifundiaCommand implements CommandExecutor {
 
     private void handleCityState(Player player, String[] args) {
         // Implementation of list command
-        player.sendMessage("City state not implemented yet!");
+        CityState cityState = cityStateManager.getCityState(player);
+        player.sendMessage("Your City State: " + cityState.getName());
     }
 }

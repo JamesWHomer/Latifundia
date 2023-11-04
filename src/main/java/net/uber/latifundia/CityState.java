@@ -28,6 +28,18 @@ public class CityState implements Serializable {
         this.memberList.put(creator.getUniqueId(), Rank.LEADER);
     }
 
+    public String getName() {
+        return this.name;
+    }
+
+    public Set<UUID> getMembers() {
+        return memberList.keySet();
+    }
+
+    public UUID getCityStateUUID() {
+        return this.cityStateUUID;
+    }
+
     enum Rank {
         LEADER,
         COLEADER,
