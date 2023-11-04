@@ -17,7 +17,7 @@ public class CityState implements Serializable {
     private List<Claim> claims = new ArrayList<>();
 
     /**
-     * Parses in Json file and loads CityState.
+     * Parses in .citystate file and loads CityState.
      */
     public CityState() {
 
