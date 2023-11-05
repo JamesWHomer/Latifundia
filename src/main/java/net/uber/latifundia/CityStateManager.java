@@ -96,11 +96,32 @@ public class CityStateManager {
         File dataFolder = new File(plugin.getDataFolder(), "cityStates");
         if (!dataFolder.exists()) {
             dataFolder.mkdirs();
+            return; // No city states to load if the directory didn't exist.
         }
 
-        //Have not implemented yet
+        File[] files = dataFolder.listFiles((dir, name) -> name.endsWith(".citystate"));
+        if (files == null) {
+            plugin.getLogger().warning("No city state files found, or an I/O error occurred.");
+            return;
+        }
 
+        for (File file : files) {
+            try {
+                // We assume that the file name is the UUID of the city state.
+                String filename = file.getName();
+                UUID cuuid = UUID.fromString(filename.substring(0, filename.length() - ".citystate".length()));
+                CityState cityState = loadCityState(file.getAbsolutePath());
+                cityStateMap.put(cuuid, cityState);
+            } catch (IOException | ClassNotFoundException e) {
+                plugin.getLogger().severe("Could not load CityState from file: " + file.getName());
+                e.printStackTrace();
+            } catch (IllegalArgumentException e) {
+                plugin.getLogger().severe("File name " + file.getName() + " does not correspond to a valid UUID.");
+                e.printStackTrace();
+            }
+        }
     }
+
 
     public void saveAllCityStates() {
         File dataFolder = new File(plugin.getDataFolder(), "cityStates");

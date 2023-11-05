@@ -7,6 +7,7 @@ import net.uber.latifundia.PlayerStalker;
 import net.uber.latifundia.claimmanagement.WorldTree;
 import net.uber.latifundia.claimmanagement.WorldTreeManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -39,39 +40,41 @@ public class LatifundiaCommand implements CommandExecutor {
             return false; // Shows the usage message from the plugin.yml file
         }
 
-        switch (args[0].toLowerCase()) {
-            case "claim":
-                // Handle claim command
-
-                handleClaim(player, args);
-
-                break;
-            case "unclaim":
-                // Handle unclaim command
-                handleUnclaim(player, args);
-                break;
-            case "info":
-                // Handle info command
-                handleInfo(player, args);
-                break;
-            case "citystate":
-                // Handle list command
-                handleCityState(player, args);
-                break;
-            default:
-                player.sendMessage("Unknown command. Use /" + label + " for help.");
+        if (args[0].equals("citystate")) {
+            handleCityState(player, args);
+        } else {
+            switch (args[0].toLowerCase()) {
+                case "claim":
+                    handleClaim(player, args);
+                    break;
+                case "unclaim":
+                    handleUnclaim(player, args);
+                    break;
+                case "info":
+                    handleInfo(player, args);
+                    break;
+                default:
+                    player.sendMessage("Unknown command. Use /" + label + " for help.");
+            }
         }
+
         return true;
     }
 
     private void handleClaim(Player player, String[] args) {
 
-        WorldTreeManager worldTreeManager = Latifundia.getPlugin(Latifundia.class).getWorldTreeManager();
-        WorldTree worldTree = worldTreeManager.getWorldTree(player.getWorld());
+        if (!cityStateManager.isCitizen(player)) {
+            player.sendMessage("You are not a citizen of a citystate");
+            return;
+        }
 
-        Point playerChunk = new Point(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
+        CityState cityState = cityStateManager.getCityState(player);
 
-        boolean successful = worldTree.insertClaim(playerChunk, player.getUniqueId());
+        Chunk chunk = player.getLocation().getChunk();
+
+        boolean successful = cityState.claimChunk(chunk);
+
+        this.playerStalker.updateChunk(new Point(chunk.getX(), chunk.getZ()));
 
         if (successful) {
             player.sendMessage("Chunk successfully claimed.");
@@ -79,20 +82,20 @@ public class LatifundiaCommand implements CommandExecutor {
             player.sendMessage("Chunk could not be claimed.");
         }
 
-        this.playerStalker.updateChunk(playerChunk);
-
     }
 
     private void handleUnclaim(Player player, String[] args) {
 
-        //Still doesn't check if player actually owns the chunk, will be implemented later.
+        if (!cityStateManager.isCitizen(player)) {
+            player.sendMessage("You are not a citizen of a citystate");
+            return;
+        }
 
-        WorldTreeManager worldTreeManager = Latifundia.getPlugin(Latifundia.class).getWorldTreeManager();
-        WorldTree worldTree = worldTreeManager.getWorldTree(player.getWorld());
+        CityState cityState = cityStateManager.getCityState(player);
 
-        Point playerChunk = new Point(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
+        Chunk chunk = player.getLocation().getChunk();
 
-        boolean successful = worldTree.removeClaim(playerChunk);
+        boolean successful = cityState.unclaimChunk(chunk);
 
         if (successful) {
             player.sendMessage("Chunk successfully unclaimed.");
@@ -100,7 +103,7 @@ public class LatifundiaCommand implements CommandExecutor {
             player.sendMessage("Chunk could not be unclaimed.");
         }
 
-        this.playerStalker.updateChunk(playerChunk);
+        this.playerStalker.updateChunk(new Point(chunk.getX(), chunk.getZ()));
 
     }
 
@@ -116,8 +119,8 @@ public class LatifundiaCommand implements CommandExecutor {
         if (ownerUUID == null) {
             player.sendMessage("Chunk is unclaimed.");
         } else {
-            String owner = Bukkit.getOfflinePlayer(ownerUUID).getName();
-            player.sendMessage("Owner: " + owner);
+            CityState cityState = cityStateManager.getCityState(ownerUUID);
+            player.sendMessage("Owner: " + cityState.getName());
         }
 
     }

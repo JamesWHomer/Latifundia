@@ -1,10 +1,14 @@
 package net.uber.latifundia;
 
-import net.uber.latifundia.claimmanagement.Claim;
+import net.uber.latifundia.claimmanagement.WorldTree;
+import net.uber.latifundia.claimmanagement.WorldTreeManager;
+import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 
+import java.awt.*;
 import java.io.Serializable;
 import java.util.*;
+import java.util.List;
 
 public class CityState implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -14,7 +18,7 @@ public class CityState implements Serializable {
     private String name;
     private UUID cityStateUUID;
     private Map<UUID, Rank> memberList = new HashMap<>();
-    private List<Claim> claims = new ArrayList<>();
+    private List<Point> claims = new ArrayList<>();
 
     /**
      * Creates new city state from scratch.
@@ -24,7 +28,7 @@ public class CityState implements Serializable {
     public CityState(UUID cuuid, String name, Player creator) {
         this.name = name;
         this.cityStateUUID = cuuid;
-        this.claims.add(new Claim(creator.getUniqueId(), creator.getLocation()));
+        this.claims.add(new Point(creator.getLocation().getChunk().getX(), creator.getLocation().getChunk().getZ()));
         this.memberList.put(creator.getUniqueId(), Rank.LEADER);
     }
 
@@ -38,6 +42,27 @@ public class CityState implements Serializable {
 
     public UUID getCityStateUUID() {
         return this.cityStateUUID;
+    }
+
+    public boolean ownsChunk(Chunk chunk) {
+        Point point = new Point(chunk.getX(), chunk.getZ());
+        return claims.contains(point);
+    }
+
+    public boolean claimChunk(Chunk chunk) {
+        WorldTreeManager worldTreeManager = Latifundia.getPlugin(Latifundia.class).getWorldTreeManager();
+        WorldTree worldTree = worldTreeManager.getWorldTree(chunk.getWorld());
+        Point point = new Point(chunk.getX(), chunk.getZ());
+        claims.add(point);
+        return worldTree.insertClaim(point, this.cityStateUUID);
+    }
+
+    public boolean unclaimChunk(Chunk chunk) {
+        WorldTreeManager worldTreeManager = Latifundia.getPlugin(Latifundia.class).getWorldTreeManager();
+        WorldTree worldTree = worldTreeManager.getWorldTree(chunk.getWorld());
+        Point point = new Point(chunk.getX(), chunk.getZ());
+        claims.remove(point);
+        return worldTree.removeClaim(point);
     }
 
     enum Rank {

@@ -19,8 +19,8 @@ public final class Latifundia extends JavaPlugin implements Listener {
         // Plugin startup logic
 
         worldTreeManager = new WorldTreeManager(this);
-        playerStalker = new PlayerStalker(worldTreeManager);
         cityStateManager = new CityStateManager(this);
+        playerStalker = new PlayerStalker(worldTreeManager, cityStateManager);
 
 
         this.getCommand("latifundia").setExecutor(new LatifundiaCommand(playerStalker, cityStateManager));

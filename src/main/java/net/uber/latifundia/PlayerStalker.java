@@ -21,6 +21,7 @@ import java.util.*;
 public class PlayerStalker implements Listener {
 
     private final WorldTreeManager worldTreeManager;
+    private final CityStateManager cityStateManager;
 
     // Maps each player's UUID to their last known chunk location
     private final Map<UUID, Point> playerChunkLocation = new HashMap<>();
@@ -33,8 +34,9 @@ public class PlayerStalker implements Listener {
      *
      * @param worldTreeManager The manager for handling world trees.
      */
-    public PlayerStalker(WorldTreeManager worldTreeManager) {
+    public PlayerStalker(WorldTreeManager worldTreeManager, CityStateManager cityStateManager) {
         this.worldTreeManager = worldTreeManager;
+        this.cityStateManager = cityStateManager;
     }
 
     /**
@@ -141,7 +143,7 @@ public class PlayerStalker implements Listener {
      * @param owner The UUID of the owner of the chunk, or null if unclaimed.
      */
     private void notifyPlayer(Player player, UUID owner) {
-        String ownerName = (owner == null) ? "&cUnclaimed Lands" : "&7" + Bukkit.getPlayer(owner).getName();
+        String ownerName = (owner == null) ? "&cUnclaimed Lands" : "&7" + cityStateManager.getCityState(owner).getName();
         sendTitle(player, ownerName);
     }
 
