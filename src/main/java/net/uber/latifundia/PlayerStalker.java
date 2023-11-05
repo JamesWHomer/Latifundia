@@ -156,7 +156,7 @@ public class PlayerStalker implements Listener {
     private void sendTitle(Player player, String title) {
         String message = ChatColor.translateAlternateColorCodes('&', title);
         int fadeIn = 5;
-        int stay = 15;
+        int stay = 20;
         int fadeOut = 10;
         player.sendTitle(message, "", fadeIn, stay, fadeOut);
     }
