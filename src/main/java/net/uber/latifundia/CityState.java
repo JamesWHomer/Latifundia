@@ -44,9 +44,28 @@ public class CityState implements Serializable {
         return this.cityStateUUID;
     }
 
+    public void deleteSelf() {
+
+        this.unclaimAllChunks();
+
+    }
+
     public boolean ownsChunk(Chunk chunk) {
         Point point = new Point(chunk.getX(), chunk.getZ());
         return claims.contains(point);
+    }
+
+    public void unclaimAllChunks() {
+
+        WorldTreeManager worldTreeManager = Latifundia.getPlugin(Latifundia.class).getWorldTreeManager();
+        WorldTree worldTree = worldTreeManager.getWorldTree(chunk.getWorld());
+
+        for (Point chunkPoint : this.claims) {
+            worldTree.removeClaim(chunkPoint);
+        }
+
+        this.claims.clear();
+
     }
 
     public boolean claimChunk(Chunk chunk) {

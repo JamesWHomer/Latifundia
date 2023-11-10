@@ -21,6 +21,7 @@ import java.util.zip.GZIPOutputStream;
 public class CityStateManager {
 
     private final JavaPlugin plugin;
+    //First value is citystate's uuid and second value is citystate object
     private final Map<UUID, CityState> cityStateMap = new HashMap<>();
     //First value is player, second is the city
     private final Map<UUID, UUID> playerCityStateMap = new HashMap<>();
@@ -42,9 +43,9 @@ public class CityStateManager {
         return playerCityStateMap.containsKey(player.getUniqueId());
     }
 
-    public CityState getCityState(UUID cuuid) {
+    public CityState getCityState(UUID cityStateUUID) {
 
-        return cityStateMap.get(cuuid);
+        return cityStateMap.get(cityStateUUID);
 
     }
 
@@ -63,9 +64,25 @@ public class CityStateManager {
 
     }
 
-    public void setCityState(UUID cuuid, CityState cityState) {
+    public void setCityState(CityState cityState) {
 
-        cityStateMap.put(cuuid, cityState);
+        cityStateMap.put(cityState.getCityStateUUID(), cityState);
+
+    }
+
+    public void deleteCityState(UUID cityStateUUID) {
+
+        CityState cityState = this.getCityState(cityStateUUID);
+
+        this.cityStateMap.remove(cityStateUUID);
+
+        Set<UUID> members = cityState.getMembers();
+
+        for (UUID member : members) {
+            playerCityStateMap.remove(member);
+        }
+
+        cityState.deleteSelf();
 
     }
 
