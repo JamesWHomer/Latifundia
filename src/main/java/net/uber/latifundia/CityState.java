@@ -68,7 +68,7 @@ public class CityState implements Serializable {
     enum Rank {
         LEADER,
         COLEADER,
-        COMMANDER,
+        ELDER,
         CITIZEN
     }
 
