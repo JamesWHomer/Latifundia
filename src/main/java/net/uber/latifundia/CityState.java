@@ -2,6 +2,7 @@ package net.uber.latifundia;
 
 import net.uber.latifundia.claimmanagement.WorldTree;
 import net.uber.latifundia.claimmanagement.WorldTreeManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 
@@ -15,10 +16,10 @@ public class CityState implements Serializable {
 
     // Planning on implementing Empires but not yet.
 
-    private String name;
-    private UUID cityStateUUID;
-    private Map<UUID, Rank> memberList = new HashMap<>();
-    private List<Point> claims = new ArrayList<>();
+    private final String name;
+    private final UUID cityStateUUID;
+    private final Map<UUID, Rank> memberList = new HashMap<>();
+    private final Map<String, List<Point>> worldClaimMap = new HashMap<>();
 
     /**
      * Creates new city state from scratch.
@@ -28,7 +29,10 @@ public class CityState implements Serializable {
     public CityState(UUID cuuid, String name, Player creator) {
         this.name = name;
         this.cityStateUUID = cuuid;
-        this.claims.add(new Point(creator.getLocation().getChunk().getX(), creator.getLocation().getChunk().getZ()));
+        Point chunkPoint = new Point(creator.getLocation().getChunk().getX(), creator.getLocation().getChunk().getZ());
+        List<Point> claimList = new ArrayList<>();
+        claimList.add(chunkPoint);
+        this.worldClaimMap.put(creator.getWorld().toString(), claimList);
         this.memberList.put(creator.getUniqueId(), Rank.LEADER);
     }
 
@@ -52,19 +56,28 @@ public class CityState implements Serializable {
 
     public boolean ownsChunk(Chunk chunk) {
         Point point = new Point(chunk.getX(), chunk.getZ());
-        return claims.contains(point);
+        String world = chunk.getWorld().toString();
+        if (!worldClaimMap.containsKey(world)) return false;
+        List<Point> pointList = worldClaimMap.get(world);
+        return pointList.contains(point);
     }
 
     public void unclaimAllChunks() {
 
-        WorldTreeManager worldTreeManager = Latifundia.getPlugin(Latifundia.class).getWorldTreeManager();
-        WorldTree worldTree = worldTreeManager.getWorldTree(chunk.getWorld());
+        for (String world : worldClaimMap.keySet()) {
 
-        for (Point chunkPoint : this.claims) {
-            worldTree.removeClaim(chunkPoint);
+            List<Point> pointList = worldClaimMap.get(world);
+
+            WorldTreeManager worldTreeManager = Latifundia.getPlugin(Latifundia.class).getWorldTreeManager();
+            WorldTree worldTree = worldTreeManager.getWorldTree(Bukkit.getWorld(world));
+
+            for (Point chunkPoint : pointList) {
+                worldTree.removeClaim(chunkPoint);
+            }
+
         }
 
-        this.claims.clear();
+        worldClaimMap.clear();
 
     }
 
@@ -72,7 +85,8 @@ public class CityState implements Serializable {
         WorldTreeManager worldTreeManager = Latifundia.getPlugin(Latifundia.class).getWorldTreeManager();
         WorldTree worldTree = worldTreeManager.getWorldTree(chunk.getWorld());
         Point point = new Point(chunk.getX(), chunk.getZ());
-        claims.add(point);
+        List<Point> pointList = worldClaimMap.get(chunk.getWorld().toString());
+        pointList.add(point);
         return worldTree.insertClaim(point, this.cityStateUUID);
     }
 
@@ -80,7 +94,8 @@ public class CityState implements Serializable {
         WorldTreeManager worldTreeManager = Latifundia.getPlugin(Latifundia.class).getWorldTreeManager();
         WorldTree worldTree = worldTreeManager.getWorldTree(chunk.getWorld());
         Point point = new Point(chunk.getX(), chunk.getZ());
-        claims.remove(point);
+        List<Point> pointList = worldClaimMap.get(chunk.getWorld().toString());
+        pointList.remove(point);
         return worldTree.removeClaim(point);
     }
 
