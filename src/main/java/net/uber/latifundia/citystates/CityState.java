@@ -1,5 +1,6 @@
-package net.uber.latifundia;
+package net.uber.latifundia.citystates;
 
+import net.uber.latifundia.Latifundia;
 import net.uber.latifundia.claimmanagement.WorldTree;
 import net.uber.latifundia.claimmanagement.WorldTreeManager;
 import org.bukkit.Bukkit;
@@ -20,6 +21,7 @@ public class CityState implements Serializable {
     private final UUID cityStateUUID;
     private final Map<UUID, Rank> memberList = new HashMap<>();
     private final Map<String, List<Point>> worldClaimMap = new HashMap<>();
+    private final Map<UUID, Relation> relationMap = new HashMap<>();
 
     /**
      * Creates new city state from scratch.
@@ -51,6 +53,16 @@ public class CityState implements Serializable {
     public void deleteSelf() {
 
         this.unclaimAllChunks();
+
+    }
+
+    public Relation getRelation(UUID cityStateUUID) {
+
+        if (relationMap.containsKey(cityStateUUID)) {
+            return relationMap.get(cityStateUUID);
+        }
+
+        return Relation.NEUTRAL;
 
     }
 

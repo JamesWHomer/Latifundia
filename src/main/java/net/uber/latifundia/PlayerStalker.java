@@ -1,5 +1,6 @@
 package net.uber.latifundia;
 
+import net.uber.latifundia.citystates.CityStateManager;
 import net.uber.latifundia.claimmanagement.WorldTreeManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -93,11 +94,27 @@ public class PlayerStalker implements Listener {
             // The chunk owner is different (or the player is entering a chunk for the first time)
             lastChunksOwner.put(playerUUID, thisChunkOwner);
             notifyPlayer(player, thisChunkOwner);
+            // Change GameMode of Player
+            updateGameMode(playerUUID, thisChunkOwner, chunk);
             return true;
         }
 
         // The chunk owner has not changed
         return false;
+    }
+
+    /**
+     * Updates the Game Mode of the player.
+     * @param playerUUID
+     * @param chunkOwner
+     * @param chunk
+     */
+    public void updateGameMode(UUID playerUUID, UUID chunkOwner, Point chunk) {
+
+        //Work on progress
+
+        Player player = Bukkit.getPlayer(playerUUID);
+
     }
 
     /**

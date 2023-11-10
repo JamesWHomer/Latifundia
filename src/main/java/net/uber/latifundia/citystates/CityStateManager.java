@@ -1,6 +1,6 @@
-package net.uber.latifundia;
+package net.uber.latifundia.citystates;
 
-import org.bukkit.World;
+import net.uber.latifundia.citystates.CityState;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 

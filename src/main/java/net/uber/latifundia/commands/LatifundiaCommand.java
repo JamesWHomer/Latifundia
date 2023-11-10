@@ -1,12 +1,11 @@
 package net.uber.latifundia.commands;
 
-import net.uber.latifundia.CityState;
-import net.uber.latifundia.CityStateManager;
+import net.uber.latifundia.citystates.CityState;
+import net.uber.latifundia.citystates.CityStateManager;
 import net.uber.latifundia.Latifundia;
 import net.uber.latifundia.PlayerStalker;
 import net.uber.latifundia.claimmanagement.WorldTree;
 import net.uber.latifundia.claimmanagement.WorldTreeManager;
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,8 +13,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.awt.*;
-import java.sql.Time;
-import java.time.Instant;
 import java.util.UUID;
 
 public class LatifundiaCommand implements CommandExecutor {

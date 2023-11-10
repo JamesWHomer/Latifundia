@@ -1,5 +1,6 @@
 package net.uber.latifundia;
 
+import net.uber.latifundia.citystates.CityStateManager;
 import net.uber.latifundia.claimmanagement.WorldTreeManager;
 import net.uber.latifundia.commands.LatifundiaCommand;
 import net.uber.latifundia.commands.LatifundiaTabCompleter;
