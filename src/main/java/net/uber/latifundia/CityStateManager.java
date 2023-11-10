@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -82,8 +83,25 @@ public class CityStateManager {
             playerCityStateMap.remove(member);
         }
 
+        try {
+            removeCityStateFile(cityState.getCityStateUUID().toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         cityState.deleteSelf();
 
+    }
+
+    public void removeCityStateFile(String filename) throws IOException {
+        File dataFolder = new File(plugin.getDataFolder(), "cityStates");
+        Path filePath = new File(dataFolder, filename).toPath();
+
+        if (Files.exists(filePath)) {
+            Files.delete(filePath);
+        } else {
+            throw new IOException("File not found: " + filePath);
+        }
     }
 
     public CityState loadCityState(String filepath) throws IOException, ClassNotFoundException {
