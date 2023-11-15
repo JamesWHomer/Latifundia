@@ -1,9 +1,12 @@
 package net.uber.latifundia;
 
+import net.uber.latifundia.citystates.CityState;
 import net.uber.latifundia.citystates.CityStateManager;
+import net.uber.latifundia.citystates.Relation;
 import net.uber.latifundia.claimmanagement.WorldTreeManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -95,7 +98,7 @@ public class PlayerStalker implements Listener {
             lastChunksOwner.put(playerUUID, thisChunkOwner);
             notifyPlayer(player, thisChunkOwner);
             // Change GameMode of Player
-            updateGameMode(playerUUID, thisChunkOwner, chunk);
+            updateGameMode(player, thisChunkOwner, chunk);
             return true;
         }
 
@@ -105,15 +108,45 @@ public class PlayerStalker implements Listener {
 
     /**
      * Updates the Game Mode of the player.
-     * @param playerUUID
-     * @param chunkOwner
-     * @param chunk
+     * @param player The player to be updated.
+     * @param chunkOwner The owner of the chunk that the player is in
+     * @param chunk The Chunk
      */
-    public void updateGameMode(UUID playerUUID, UUID chunkOwner, Point chunk) {
+    public void updateGameMode(Player player, UUID chunkOwner, Point chunk) {
 
         //Work on progress
 
-        Player player = Bukkit.getPlayer(playerUUID);
+        if ((player.getGameMode() == GameMode.SPECTATOR) || (player.getGameMode() == GameMode.CREATIVE)) {
+            return;
+        }
+
+        if (chunkOwner == null) {
+            //The Wild
+            player.setGameMode(GameMode.SURVIVAL);
+        } else {
+
+            CityState playerCityState = cityStateManager.getCityState(player);
+
+            if (playerCityState.getCityStateUUID() == chunkOwner) {
+                player.setGameMode(GameMode.SURVIVAL);
+                return;
+            }
+
+            Relation relation = playerCityState.getRelation(chunkOwner);
+
+            switch (relation) {
+                case NEUTRAL:
+                case UNFRIENDLY:
+                case FRIENDLY:
+                    player.setGameMode(GameMode.ADVENTURE);
+                    break;
+                case ALLY:
+                case WAR:
+                    player.setGameMode(GameMode.SURVIVAL);
+                    break;
+            }
+
+        }
 
     }
 
