@@ -98,7 +98,7 @@ public class PlayerStalker implements Listener {
             lastChunksOwner.put(playerUUID, thisChunkOwner);
             notifyPlayer(player, thisChunkOwner);
             // Change GameMode of Player
-            updateGameMode(player, thisChunkOwner, chunk);
+            updateGameMode(player, thisChunkOwner);
             return true;
         }
 
@@ -110,9 +110,8 @@ public class PlayerStalker implements Listener {
      * Updates the Game Mode of the player.
      * @param player The player to be updated.
      * @param chunkOwner The owner of the chunk that the player is in
-     * @param chunk The Chunk
      */
-    public void updateGameMode(Player player, UUID chunkOwner, Point chunk) {
+    public void updateGameMode(Player player, UUID chunkOwner) {
 
         //Work on progress
 
