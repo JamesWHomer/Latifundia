@@ -115,7 +115,7 @@ public class CityState implements Serializable {
         return worldTree.removeClaim(point);
     }
 
-    enum Rank {
+    public enum Rank {
         LEADER,
         COLEADER,
         ELDER,
