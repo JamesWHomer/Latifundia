@@ -48,13 +48,14 @@ public class LatifundiaTabCompleter implements TabCompleter {
                 subCommands.add("create");
             }
 
-            return StringUtil.copyPartialMatches(args[0], getSubCommands(), new ArrayList<>());
+            return StringUtil.copyPartialMatches(args[0], subCommands, new ArrayList<>());
 
         }
 
         return null;
     }
 
+    /*
     private List<String> getSubCommands() {
         List<String> subCommands = new ArrayList<>();
         subCommands.add("claim");
@@ -64,4 +65,5 @@ public class LatifundiaTabCompleter implements TabCompleter {
         subCommands.add("create");
         return subCommands;
     }
+     */
 }
