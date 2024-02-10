@@ -42,6 +42,10 @@ public class CityState implements Serializable {
         return this.name;
     }
 
+    public int getPopulation() {
+        return memberList.size();
+    }
+
     public Rank getRank(Player player) {
         return this.memberList.get(player.getUniqueId());
     }
