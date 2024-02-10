@@ -1,6 +1,5 @@
 package net.uber.latifundia.citystates;
 
-import net.uber.latifundia.citystates.CityState;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -40,7 +39,7 @@ public class CityStateManager {
 
     }
 
-    public boolean isCitizen(Player player) {
+    public boolean isMemberOfCityState(Player player) {
         return playerCityStateMap.containsKey(player.getUniqueId());
     }
 
@@ -56,12 +55,16 @@ public class CityStateManager {
 
     }
 
-    public void createCityState(String name, Player creator) {
+    public CityState createCityState(String name, Player creator) {
 
         UUID cuuid = UUID.randomUUID();
 
-        cityStateMap.put(cuuid, new CityState(cuuid, name, creator));
+        CityState newCityState = new CityState(cuuid, name, creator);
+
+        cityStateMap.put(cuuid, newCityState);
         playerCityStateMap.put(creator.getUniqueId(), cuuid);
+
+        return newCityState;
 
     }
 

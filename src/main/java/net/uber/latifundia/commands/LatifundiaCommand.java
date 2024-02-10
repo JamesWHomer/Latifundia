@@ -37,30 +37,54 @@ public class LatifundiaCommand implements CommandExecutor {
             return false; // Shows the usage message from the plugin.yml file
         }
 
-        if (args[0].equals("citystate")) {
-            handleCityState(player, args);
-        } else {
-            switch (args[0].toLowerCase()) {
-                case "claim":
-                    handleClaim(player, args);
-                    break;
-                case "unclaim":
-                    handleUnclaim(player, args);
-                    break;
-                case "info":
-                    handleInfo(player, args);
-                    break;
-                default:
-                    player.sendMessage("Unknown command. Use /" + label + " for help.");
-            }
+        String command = args[0].toLowerCase();
+        switch (command) {
+            case "citystate":
+                handleCityState(player, args);
+                break;
+            case "claim":
+                handleClaim(player, args);
+                break;
+            case "unclaim":
+                handleUnclaim(player, args);
+                break;
+            case "info":
+                handleInfo(player, args);
+                break;
+            case "create":
+                if (args.length == 2) {
+                    handleCreate(player, args);
+                } else {
+                    player.sendMessage("Incorrect usage of /" + label + " create. Expected 2 arguments.");
+                }
+                break;
+            default:
+                player.sendMessage("Unknown command. Use /" + label + " for help.");
+                return true;
         }
 
         return true;
     }
 
+
+    private void handleCreate(Player player, String[] args) {
+
+        player.sendMessage("Handle create");
+
+        if (cityStateManager.isMemberOfCityState(player)) {
+            player.sendMessage("You are already a member of a citystate!");
+            return;
+        }
+
+        CityState cityState = cityStateManager.createCityState(args[1], player);
+
+        player.sendMessage("CityState Created!");
+
+    }
+
     private void handleClaim(Player player, String[] args) {
 
-        if (!cityStateManager.isCitizen(player)) {
+        if (!cityStateManager.isMemberOfCityState(player)) {
             player.sendMessage("You are not a citizen of a citystate");
             return;
         }
@@ -83,7 +107,7 @@ public class LatifundiaCommand implements CommandExecutor {
 
     private void handleUnclaim(Player player, String[] args) {
 
-        if (!cityStateManager.isCitizen(player)) {
+        if (!cityStateManager.isMemberOfCityState(player)) {
             player.sendMessage("You are not a citizen of a citystate");
             return;
         }
@@ -125,7 +149,7 @@ public class LatifundiaCommand implements CommandExecutor {
     private void handleCityState(Player player, String[] args) {
         // Implementation of list command
 
-        if (cityStateManager.isCitizen(player)) {
+        if (cityStateManager.isMemberOfCityState(player)) {
             CityState cityState = cityStateManager.getCityState(player);
             player.sendMessage("Your City State: " + cityState.getName());
         } else {

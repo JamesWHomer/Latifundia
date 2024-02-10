@@ -24,6 +24,7 @@ public class LatifundiaTabCompleter implements TabCompleter {
         subCommands.add("unclaim");
         subCommands.add("info");
         subCommands.add("citystate");
+        subCommands.add("create");
         return subCommands;
     }
 }
