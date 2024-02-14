@@ -45,14 +45,19 @@ public class LatifundiaTabCompleter implements TabCompleter {
                 }
 
                 if (rank == CityState.Rank.ELDER || rank == CityState.Rank.COLEADER || rank == CityState.Rank.LEADER) {
+
                     if (cityState.ownsChunk(player.getLocation().getChunk())) {
                         subCommands.add("unclaim");
                     } else {
                         subCommands.add("claim");
                     }
-                    subCommands.add("invite");
+
                     if (rank == CityState.Rank.COLEADER || rank == CityState.Rank.LEADER) {
+
+                        subCommands.add("invite");
+
                         subCommands.add("promote");
+
                     }
                 }
 

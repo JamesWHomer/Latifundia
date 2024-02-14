@@ -93,6 +93,13 @@ public class LatifundiaCommand implements CommandExecutor {
 
     private void handleAbandon(Player player, String[] args) {
 
+        CityState cityState = cityStateManager.getCityState(player);
+
+        if (cityState.getPopulation() != 1) {
+            player.sendMessage(GeneralUtils.colour("&cYou cannot abandon a CityState as there are other members in it!"));
+            return;
+        }
+
         if (args.length != 2 || !Objects.equals(args[1], "confirm")) {
             player.sendMessage(GeneralUtils.colour("&cAre you sure you wish to abandon your CityState? This action cannot be undone! To confirm please type &e/lf abandon confirm"));
             return;
