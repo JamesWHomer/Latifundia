@@ -58,6 +58,10 @@ public class CityState implements Serializable {
         return this.cityStateUUID;
     }
 
+    public void removeMember(UUID player) {
+        memberList.remove(player);
+    }
+
     public void deleteSelf() {
 
         this.unclaimAllChunks();
