@@ -125,21 +125,6 @@ public class CityState implements Serializable {
 
     }
 
-    public boolean canInvite(Player player) {
-        Rank rank = getRank(player);
-        return (rank == Rank.COLEADER || rank == Rank.LEADER);
-    }
-
-    public boolean canClaim(Player player) {
-        Rank rank = getRank(player);
-        return (rank == Rank.COLEADER || rank == Rank.LEADER || rank == Rank.ELDER);
-    }
-
-    public boolean canUnclaim(Player player) {
-        Rank rank = getRank(player);
-        return (rank == Rank.COLEADER || rank == Rank.LEADER || rank == Rank.ELDER);
-    }
-
     public boolean claimChunk(Chunk chunk) {
         WorldTreeManager worldTreeManager = Latifundia.getPlugin(Latifundia.class).getWorldTreeManager();
         WorldTree worldTree = worldTreeManager.getWorldTree(chunk.getWorld());
@@ -158,11 +143,37 @@ public class CityState implements Serializable {
         return worldTree.removeClaim(point);
     }
 
+    public boolean canInvite(Player player) {
+        Rank rank = getRank(player);
+        return (rank == Rank.GENERAL || rank == Rank.LEADER);
+    }
+
+    public boolean canClaim(Player player) {
+        Rank rank = getRank(player);
+        return (rank == Rank.GENERAL || rank == Rank.LEADER || rank == Rank.ELDER);
+    }
+
+    public boolean canUnclaim(Player player) {
+        Rank rank = getRank(player);
+        return (rank == Rank.GENERAL || rank == Rank.LEADER || rank == Rank.ELDER);
+    }
+
+    //Probably could use simplifying, maybe with integer values
+    public boolean canPromote(Player player, Rank desiredRank) {
+        Rank rank = getRank(player);
+        if (rank == Rank.SERF) return false;
+        if (desiredRank == Rank.SERF && (rank == Rank.GENERAL || rank == Rank.LEADER)) return true;
+        if (desiredRank == Rank.ELDER && rank == Rank.LEADER) return true;
+        if (desiredRank == Rank.GENERAL && rank == Rank.LEADER) return true;
+        if (desiredRank == Rank.LEADER && rank == Rank.LEADER) return true;
+        return false;
+    }
+
     public enum Rank {
         LEADER,
-        COLEADER,
+        GENERAL,
         ELDER,
-        CITIZEN
+        SERF
     }
 
 }

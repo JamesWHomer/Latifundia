@@ -44,21 +44,21 @@ public class LatifundiaTabCompleter implements TabCompleter {
                     subCommands.add("leave");
                 }
 
-                if (rank == CityState.Rank.ELDER || rank == CityState.Rank.COLEADER || rank == CityState.Rank.LEADER) {
-
+                if (cityState.canClaim(player)) {
                     if (cityState.ownsChunk(player.getLocation().getChunk())) {
                         subCommands.add("unclaim");
-                    } else {
+                    }
+                }
+
+                if (cityState.canUnclaim(player)) {
+                    if (!cityState.ownsChunk(player.getLocation().getChunk())) {
                         subCommands.add("claim");
                     }
+                }
 
-                    if (rank == CityState.Rank.COLEADER || rank == CityState.Rank.LEADER) {
-
-                        subCommands.add("invite");
-
-                        subCommands.add("promote");
-
-                    }
+                if (cityState.canInvite(player)) {
+                    subCommands.add("invite");
+                    subCommands.add("promote");
                 }
 
             } else {
