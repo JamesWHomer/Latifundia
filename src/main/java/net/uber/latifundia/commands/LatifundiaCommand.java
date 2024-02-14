@@ -102,7 +102,7 @@ public class LatifundiaCommand implements CommandExecutor {
 
         cityStateManager.deleteCityState(uuid);
 
-        player.sendMessage("CityState abandoned!");
+        player.sendMessage(GeneralUtils.colour("&cYour CityState has been successfully abandoned."));
 
     }
 
@@ -128,7 +128,7 @@ public class LatifundiaCommand implements CommandExecutor {
     private void handleClaim(Player player, String[] args) {
 
         if (!cityStateManager.isMemberOfCityState(player)) {
-            player.sendMessage("You are not a citizen of a citystate");
+            player.sendMessage(GeneralUtils.colour("&cYou are not a citizen of a CityState!"));
             return;
         }
 
@@ -141,9 +141,9 @@ public class LatifundiaCommand implements CommandExecutor {
         this.playerStalker.updateChunk(new Point(chunk.getX(), chunk.getZ()));
 
         if (successful) {
-            player.sendMessage("Chunk successfully claimed.");
+            player.sendMessage(GeneralUtils.colour("&cChunk has been successfully claimed."));
         } else {
-            player.sendMessage("Chunk could not be claimed.");
+            player.sendMessage(GeneralUtils.colour("&cChunk could not be claimed."));
         }
 
     }
@@ -151,7 +151,7 @@ public class LatifundiaCommand implements CommandExecutor {
     private void handleUnclaim(Player player, String[] args) {
 
         if (!cityStateManager.isMemberOfCityState(player)) {
-            player.sendMessage("You are not a citizen of a citystate");
+            player.sendMessage(GeneralUtils.colour("&cYou are not a citizen of a CityState and so cannot claim this chunk."));
             return;
         }
 
@@ -162,9 +162,9 @@ public class LatifundiaCommand implements CommandExecutor {
         boolean successful = cityState.unclaimChunk(chunk);
 
         if (successful) {
-            player.sendMessage("Chunk successfully unclaimed.");
+            player.sendMessage(GeneralUtils.colour("&cChunk successfully unclaimed."));
         } else {
-            player.sendMessage("Chunk could not be unclaimed.");
+            player.sendMessage(GeneralUtils.colour("&cChunk could not be unclaimed."));
         }
 
         this.playerStalker.updateChunk(new Point(chunk.getX(), chunk.getZ()));
