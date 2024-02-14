@@ -32,8 +32,6 @@ public class LatifundiaTabCompleter implements TabCompleter {
 
         if (args.length == 1) {
             List<String> subCommands = new ArrayList<>();
-            subCommands.add("claim");
-            subCommands.add("unclaim");
             subCommands.add("info");
 
             if (cityStateManager.isMemberOfCityState(player)) {
@@ -44,6 +42,13 @@ public class LatifundiaTabCompleter implements TabCompleter {
                 } else {
                     subCommands.add("leave");
                 }
+
+                if (cityState.ownsChunk(player.getLocation().getChunk())) {
+                    subCommands.add("unclaim");
+                } else {
+                    subCommands.add("claim");
+                }
+
             } else {
                 subCommands.add("create");
             }
