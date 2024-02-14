@@ -22,7 +22,15 @@ commands:
         description: Get information about a land
         usage: /<command> info
         permission: latifundia.info
-      citystate:
-        description: Open citystate GUI
-        usage: /<command> citystate
-        permission: latifundia.citystate
+      abandon:
+        description: Abandons and deletes the citystate
+        usage: /<command> abandon
+        permission: latifundia.abandon
+      create:
+        description: Creates a new citystate
+        usage: /<command> create
+        permission: latifundia.create
+      leave:
+        description: Leaves the citystate
+        usage: /<command> leave
+        permission: latifundia.leave
