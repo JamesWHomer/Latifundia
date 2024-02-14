@@ -97,12 +97,18 @@ public class CityStateManager {
         cityState.deleteSelf();
 
         try {
-            removeCityStateFile(cityState.getCityStateUUID().toString() + ".citystate");
+            removeCityStateFile(cityState);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         playerStalker.resetCityStateChunks(cityStateUUID);
+
+    }
+
+    public void removeCityStateFile(CityState cityState) throws IOException {
+
+        removeCityStateFile(cityState.getCityStateUUID().toString() + ".citystate");
 
     }
 

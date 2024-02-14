@@ -99,7 +99,7 @@ public class LatifundiaCommand implements CommandExecutor {
 
         cityStateManager.deleteCityState(uuid);
 
-        player.sendMessage("CityState deleted!");
+        player.sendMessage("CityState abandoned!");
 
     }
 
