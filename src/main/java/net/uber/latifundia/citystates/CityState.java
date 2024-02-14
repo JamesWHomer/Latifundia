@@ -1,5 +1,6 @@
 package net.uber.latifundia.citystates;
 
+import net.uber.latifundia.GeneralUtils;
 import net.uber.latifundia.Latifundia;
 import net.uber.latifundia.claimmanagement.WorldTree;
 import net.uber.latifundia.claimmanagement.WorldTreeManager;
@@ -23,6 +24,7 @@ public class CityState implements Serializable {
     private final Map<UUID, Rank> memberList = new HashMap<>();
     private final Map<String, List<Point>> worldClaimMap = new HashMap<>();
     private final Map<UUID, Relation> relationMap = new HashMap<>();
+    private final Map<UUID, Long> invitedPlayers = new HashMap<>();
 
     /**
      * Creates new city state from scratch.
@@ -107,6 +109,39 @@ public class CityState implements Serializable {
         }
 
         worldClaimMap.clear();
+
+    }
+
+    /**
+     * Creates an invitation entry into a Map, noting current time and sending an invitation request.
+     * @param player the player who was invited
+     */
+    public void invitePlayer(Player player) {
+
+        invitedPlayers.put(player.getUniqueId(), System.currentTimeMillis());
+
+        //Still have to implement accept and decline button
+        player.sendMessage(GeneralUtils.colour("&aYou have been invited to: '" + this.name + "', &4&l[accept] &2&l[decline]"));
+
+    }
+
+    public boolean canInvite(Player player) {
+
+        Rank rank = getRank(player);
+
+        return (rank == CityState.Rank.COLEADER || rank == CityState.Rank.LEADER);
+
+    }
+
+    public boolean canClaim(Player player) {
+
+
+
+    }
+
+    public boolean canUnclaim(Player player) {
+
+
 
     }
 

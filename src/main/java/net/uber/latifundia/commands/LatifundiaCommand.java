@@ -7,6 +7,7 @@ import net.uber.latifundia.Latifundia;
 import net.uber.latifundia.PlayerStalker;
 import net.uber.latifundia.claimmanagement.WorldTree;
 import net.uber.latifundia.claimmanagement.WorldTreeManager;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -70,12 +71,45 @@ public class LatifundiaCommand implements CommandExecutor {
             case "leave":
                 handleLeave(player, args);
                 break;
+            case "invite":
+                handleInvite(player, args);
+                break;
             default:
                 player.sendMessage("Unknown command. Use /" + label + " for help.");
                 return true;
         }
 
         return true;
+    }
+
+    private void handleInvite(Player player, String[] args) {
+
+        if (!cityStateManager.isMemberOfCityState(player)) {
+            player.sendMessage(GeneralUtils.colour("&cYou are not a citizen of a CityState!"));
+            return;
+        }
+
+        CityState cityState = cityStateManager.getCityState(player);
+
+        if (!cityState.canInvite(player)) {
+            player.sendMessage(GeneralUtils.colour("&cYou are not high enough rank to invite players!"));
+            return;
+        }
+
+        Player invited = Bukkit.getPlayerExact(args[1]);
+
+        if (args.length != 2 || invited == null) {
+            player.sendMessage(GeneralUtils.colour("&cPlease specify a valid and currently online player."));
+            return;
+        }
+
+        if (cityStateManager.isMemberOfCityState(invited)) {
+            player.sendMessage(GeneralUtils.colour("&cThe invited player is already a member of a CityState!"));
+            return;
+        }
+
+        invited.sendMessage("You're Invited");
+
     }
 
     private void handleLeave(Player player, String[] args) {
@@ -129,7 +163,6 @@ public class LatifundiaCommand implements CommandExecutor {
             player.sendMessage(GeneralUtils.colour("&cThe chunk you are currently in is already owned by someone else!"));
             return;
         }
-
 
         CityState cityState = cityStateManager.createCityState(args[1], player);
 
