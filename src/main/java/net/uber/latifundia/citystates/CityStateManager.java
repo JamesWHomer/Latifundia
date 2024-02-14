@@ -1,5 +1,6 @@
 package net.uber.latifundia.citystates;
 
+import net.uber.latifundia.PlayerStalker;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -20,17 +21,24 @@ import java.util.zip.GZIPOutputStream;
 
 public class CityStateManager {
 
+    private PlayerStalker playerStalker;
+
     private final JavaPlugin plugin;
     //First value is citystate's uuid and second value is citystate object
     private final Map<UUID, CityState> cityStateMap = new HashMap<>();
     //First value is player, second is the city
     private final Map<UUID, UUID> playerCityStateMap = new HashMap<>();
 
-    public CityStateManager(JavaPlugin plugin) {
+    public CityStateManager(JavaPlugin plugin, PlayerStalker playerStalker) {
 
+        this.playerStalker = playerStalker;
         this.plugin = plugin;
         loadAllCityStates();
 
+    }
+
+    public void setPlayerStalker(PlayerStalker playerStalker) {
+        this.playerStalker = playerStalker;
     }
 
     public boolean doesCityExist(UUID cuuid) {
@@ -86,13 +94,15 @@ public class CityStateManager {
             playerCityStateMap.remove(member);
         }
 
+        cityState.deleteSelf();
+
         try {
-            removeCityStateFile(cityState.getCityStateUUID().toString());
+            removeCityStateFile(cityState.getCityStateUUID().toString() + ".citystate");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        cityState.deleteSelf();
+        playerStalker.resetCityStateChunks(cityStateUUID);
 
     }
 
@@ -102,9 +112,8 @@ public class CityStateManager {
 
         if (Files.exists(filePath)) {
             Files.delete(filePath);
-        } else {
-            throw new IOException("File not found: " + filePath);
         }
+
     }
 
     public CityState loadCityState(String filepath) throws IOException, ClassNotFoundException {

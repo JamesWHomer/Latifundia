@@ -43,7 +43,7 @@ public class PlayerStalker implements Listener {
         this.cityStateManager = cityStateManager;
     }
 
-    public void removeOwner(UUID owner) {
+    public void resetCityStateChunks(UUID owner) {
         lastChunksOwner.values().removeIf(value -> value.equals(owner));
     }
 
