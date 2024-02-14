@@ -1,5 +1,7 @@
 package net.uber.latifundia;
 
+import org.bukkit.ChatColor;
+
 import java.awt.*;
 import java.util.Iterator;
 import java.util.Map;
@@ -15,6 +17,10 @@ public class GeneralUtils {
                 iterator.remove();
             }
         }
+    }
+
+    public static String colour(String string) {
+        return ChatColor.translateAlternateColorCodes('&', string);
     }
 
 }
