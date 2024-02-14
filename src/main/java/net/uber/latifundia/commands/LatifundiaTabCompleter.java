@@ -40,7 +40,7 @@ public class LatifundiaTabCompleter implements TabCompleter {
                 CityState cityState = cityStateManager.getCityState(player);
 
                 if (cityState.getPopulation() == 1) {
-                    subCommands.add("delete");
+                    subCommands.add("abandon");
                 } else {
                     subCommands.add("leave");
                 }
@@ -55,15 +55,4 @@ public class LatifundiaTabCompleter implements TabCompleter {
         return null;
     }
 
-    /*
-    private List<String> getSubCommands() {
-        List<String> subCommands = new ArrayList<>();
-        subCommands.add("claim");
-        subCommands.add("unclaim");
-        subCommands.add("info");
-        subCommands.add("citystate");
-        subCommands.add("create");
-        return subCommands;
-    }
-     */
 }
