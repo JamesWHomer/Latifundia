@@ -87,6 +87,11 @@ public class LatifundiaCommand implements CommandExecutor {
             return;
         }
 
+        if (args.length != 2 || !Objects.equals(args[1], "confirm")) {
+            player.sendMessage(GeneralUtils.colour("&cAre you sure you wish to leave your CityState? This action cannot be undone! To confirm please type &e/lf leave confirm"));
+            return;
+        }
+
         cityState.removeMember(player.getUniqueId());
 
     }
