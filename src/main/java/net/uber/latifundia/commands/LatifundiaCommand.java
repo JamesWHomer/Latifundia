@@ -9,6 +9,7 @@ import net.uber.latifundia.claimmanagement.WorldTree;
 import net.uber.latifundia.claimmanagement.WorldTreeManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -22,10 +23,12 @@ public class LatifundiaCommand implements CommandExecutor {
 
     private PlayerStalker playerStalker;
     private CityStateManager cityStateManager;
+    private WorldTreeManager worldTreeManager;
 
-    public LatifundiaCommand(PlayerStalker playerStalker, CityStateManager cityStateManager) {
+    public LatifundiaCommand(PlayerStalker playerStalker, CityStateManager cityStateManager, WorldTreeManager worldTreeManager) {
         this.playerStalker = playerStalker;
         this.cityStateManager = cityStateManager;
+        this.worldTreeManager = worldTreeManager;
     }
 
     @Override
@@ -106,9 +109,15 @@ public class LatifundiaCommand implements CommandExecutor {
     private void handleCreate(Player player, String[] args) {
 
         if (cityStateManager.isMemberOfCityState(player)) {
-            player.sendMessage("You are already a member of a citystate!");
+            player.sendMessage(GeneralUtils.colour("&cYou are already a member of a citystate!"));
             return;
         }
+
+        if (worldTreeManager.getChunkOwner(player.getLocation()) != null) {
+            player.sendMessage(GeneralUtils.colour("&cThe chunk you are currently in is already owned by someone else!"));
+            return;
+        }
+
 
         CityState cityState = cityStateManager.createCityState(args[1], player);
 

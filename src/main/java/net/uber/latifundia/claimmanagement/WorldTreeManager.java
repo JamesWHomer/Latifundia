@@ -1,14 +1,17 @@
 package net.uber.latifundia.claimmanagement;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 import java.util.zip.GZIPInputStream;
@@ -161,5 +164,12 @@ public class WorldTreeManager {
         });
     }
 
+    public UUID getChunkOwner(Location location) {
+
+        Point chunk = new Point(location.getChunk().getX(), location.getChunk().getZ());
+
+        return getWorldTree(location.getWorld()).queryClaim(chunk);
+
+    }
 
 }
