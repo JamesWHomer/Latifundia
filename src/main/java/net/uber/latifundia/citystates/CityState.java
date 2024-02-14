@@ -126,23 +126,18 @@ public class CityState implements Serializable {
     }
 
     public boolean canInvite(Player player) {
-
         Rank rank = getRank(player);
-
-        return (rank == CityState.Rank.COLEADER || rank == CityState.Rank.LEADER);
-
+        return (rank == Rank.COLEADER || rank == Rank.LEADER);
     }
 
     public boolean canClaim(Player player) {
-
-
-
+        Rank rank = getRank(player);
+        return (rank == Rank.COLEADER || rank == Rank.LEADER || rank == Rank.ELDER);
     }
 
     public boolean canUnclaim(Player player) {
-
-
-
+        Rank rank = getRank(player);
+        return (rank == Rank.COLEADER || rank == Rank.LEADER || rank == Rank.ELDER);
     }
 
     public boolean claimChunk(Chunk chunk) {
