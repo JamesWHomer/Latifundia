@@ -36,6 +36,7 @@ public class LatifundiaTabCompleter implements TabCompleter {
 
             if (cityStateManager.isMemberOfCityState(player)) {
                 CityState cityState = cityStateManager.getCityState(player);
+                CityState.Rank rank = cityState.getRank(player);
 
                 if (cityState.getPopulation() == 1) {
                     subCommands.add("abandon");
@@ -43,10 +44,16 @@ public class LatifundiaTabCompleter implements TabCompleter {
                     subCommands.add("leave");
                 }
 
-                if (cityState.ownsChunk(player.getLocation().getChunk())) {
-                    subCommands.add("unclaim");
-                } else {
-                    subCommands.add("claim");
+                if (rank == CityState.Rank.ELDER || rank == CityState.Rank.COLEADER || rank == CityState.Rank.LEADER) {
+                    if (cityState.ownsChunk(player.getLocation().getChunk())) {
+                        subCommands.add("unclaim");
+                    } else {
+                        subCommands.add("claim");
+                    }
+                    subCommands.add("invite");
+                    if (rank == CityState.Rank.COLEADER || rank == CityState.Rank.LEADER) {
+                        subCommands.add("promote");
+                    }
                 }
 
             } else {
