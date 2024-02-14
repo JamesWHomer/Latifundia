@@ -27,7 +27,7 @@ public class CityState implements Serializable {
     /**
      * Creates new city state from scratch.
      * @param name Creates name of CityState
-     * @param creator Clarifies who is Praetor
+     * @param creator Clarifies who is Leader
      */
     public CityState(UUID cuuid, String name, Player creator) {
         this.name = name;
