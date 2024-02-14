@@ -1,5 +1,6 @@
 package net.uber.latifundia;
 
+import net.uber.latifundia.citystates.CityState;
 import net.uber.latifundia.citystates.CityStateManager;
 import net.uber.latifundia.claimmanagement.WorldTreeManager;
 import net.uber.latifundia.commands.LatifundiaCommand;
@@ -50,6 +51,10 @@ public final class Latifundia extends JavaPlugin implements Listener {
 
     public WorldTreeManager getWorldTreeManager() {
         return worldTreeManager;
+    }
+
+    public CityStateManager getCityStateManager() {
+        return cityStateManager;
     }
 
 }

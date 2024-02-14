@@ -74,6 +74,9 @@ public class LatifundiaCommand implements CommandExecutor {
             case "invite":
                 handleInvite(player, args);
                 break;
+            case "accept":
+                handleAccept(player, args);
+                break;
             default:
                 player.sendMessage("Unknown command. Use /" + label + " for help.");
                 return true;
@@ -109,6 +112,24 @@ public class LatifundiaCommand implements CommandExecutor {
         }
 
         invited.sendMessage("You're Invited");
+
+    }
+
+    private void handleAccept(Player player, String[] args) {
+
+        if (cityStateManager.isMemberOfCityState(player)) {
+            player.sendMessage(GeneralUtils.colour("&cYou are already a member of a CityState"));
+            return;
+        }
+
+        if (args.length != 2 || cityStateManager.doesCityExist(args[1])) {
+            player.sendMessage(GeneralUtils.colour("&cYou need to specify the CityState you are attempting to join."));
+            return;
+        }
+
+        CityState cityState = cityStateManager.getCityState(args[1]);
+
+        cityState.acceptInvite(player);
 
     }
 

@@ -11,10 +11,7 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -47,8 +44,23 @@ public class CityStateManager {
 
     }
 
+    public boolean doesCityExist(String name) {
+        for (UUID uuid : cityStateMap.keySet()) {
+            if (Objects.equals(cityStateMap.get(uuid).getName(), name)) return true;
+        }
+        return false;
+    }
+
+
     public boolean isMemberOfCityState(Player player) {
         return playerCityStateMap.containsKey(player.getUniqueId());
+    }
+
+    public CityState getCityState(String name) {
+        for (UUID uuid : cityStateMap.keySet()) {
+            if (Objects.equals(cityStateMap.get(uuid).getName(), name)) return cityStateMap.get(uuid);
+        }
+        return null;
     }
 
     public CityState getCityState(UUID cityStateUUID) {

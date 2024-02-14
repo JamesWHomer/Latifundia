@@ -65,6 +65,10 @@ public class CityState implements Serializable {
         memberList.remove(player);
     }
 
+    public void addMember(UUID player) {
+        memberList.put(player, Rank.SERF);
+    }
+
     public void deleteSelf() {
 
         this.unclaimAllChunks();
@@ -121,9 +125,33 @@ public class CityState implements Serializable {
         invitedPlayers.put(player.getUniqueId(), System.currentTimeMillis());
 
         //Still have to implement accept and decline button
-        player.sendMessage(GeneralUtils.colour("&aYou have been invited to: '" + this.name + "', &4&l[accept] &2&l[decline]"));
+        player.sendMessage(GeneralUtils.colour("&aYou have been invited to: '" + this.name + "', you have 10 minutes to accept: &4&l[accept] &2&l[decline]"));
 
     }
+
+    public void acceptInvite(Player player) {
+
+        //Assuming player is not a member of a cityState
+
+        if (!invitedPlayers.containsKey(player.getUniqueId())) {
+            player.sendMessage(GeneralUtils.colour("&cInvite not found!"));
+            return;
+        }
+
+        Long time = invitedPlayers.get(player.getUniqueId());
+        Long currentTime = System.currentTimeMillis();
+
+        if (currentTime - time > 600000) {
+            player.sendMessage(GeneralUtils.colour("&cInvite has expired."));
+            invitedPlayers.remove(player.getUniqueId());
+            return;
+        }
+
+        this.addMember(player.getUniqueId());
+
+    }
+
+
 
     public boolean claimChunk(Chunk chunk) {
         WorldTreeManager worldTreeManager = Latifundia.getPlugin(Latifundia.class).getWorldTreeManager();
