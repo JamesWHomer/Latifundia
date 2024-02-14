@@ -1,11 +1,13 @@
 package net.uber.latifundia.commands;
 
+import net.uber.latifundia.GeneralUtils;
 import net.uber.latifundia.citystates.CityState;
 import net.uber.latifundia.citystates.CityStateManager;
 import net.uber.latifundia.Latifundia;
 import net.uber.latifundia.PlayerStalker;
 import net.uber.latifundia.claimmanagement.WorldTree;
 import net.uber.latifundia.claimmanagement.WorldTreeManager;
+import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,6 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.awt.*;
+import java.util.Objects;
 import java.util.UUID;
 
 public class LatifundiaCommand implements CommandExecutor {
@@ -58,6 +61,12 @@ public class LatifundiaCommand implements CommandExecutor {
                     player.sendMessage("Incorrect usage of /" + label + " create. Expected 2 arguments.");
                 }
                 break;
+            case "abandon":
+                handleAbandon(player, args);
+                break;
+            case "leave":
+                handleLeave(player, args);
+                break;
             default:
                 player.sendMessage("Unknown command. Use /" + label + " for help.");
                 return true;
@@ -66,10 +75,35 @@ public class LatifundiaCommand implements CommandExecutor {
         return true;
     }
 
+    private void handleLeave(Player player, String[] args) {
+
+        CityState cityState = cityStateManager.getCityState(player);
+
+        if (cityState.getPopulation() != 1) {
+            player.sendMessage(GeneralUtils.colour("&cYou cannot leave your CityState as you are the only member! To continue with this action use the command &e/lf abandon"));
+            return;
+        }
+
+        cityState.removeMember(player.getUniqueId());
+
+    }
+
+    private void handleAbandon(Player player, String[] args) {
+
+        if (args.length != 2 || !Objects.equals(args[1], "confirm")) {
+            player.sendMessage(GeneralUtils.colour("&cAre you sure you wish to abandon your CityState? This action cannot be undone! To confirm please type &e/lf abandon confirm"));
+            return;
+        }
+
+        UUID uuid = cityStateManager.getCityState(player).getCityStateUUID();
+
+        cityStateManager.deleteCityState(uuid);
+
+        player.sendMessage("CityState deleted!");
+
+    }
 
     private void handleCreate(Player player, String[] args) {
-
-        player.sendMessage("Handle create");
 
         if (cityStateManager.isMemberOfCityState(player)) {
             player.sendMessage("You are already a member of a citystate!");
