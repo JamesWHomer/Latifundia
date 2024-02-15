@@ -2,6 +2,7 @@ package net.uber.latifundia.commands;
 
 import net.uber.latifundia.citystates.CityState;
 import net.uber.latifundia.citystates.CityStateManager;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -30,13 +31,14 @@ public class LatifundiaTabCompleter implements TabCompleter {
 
         if (args.length == 0) return null;
 
+        List<String> subCommands = new ArrayList<>();
+
         if (args.length == 1) {
-            List<String> subCommands = new ArrayList<>();
+
             subCommands.add("info");
 
             if (cityStateManager.isMemberOfCityState(player)) {
                 CityState cityState = cityStateManager.getCityState(player);
-                CityState.Rank rank = cityState.getRank(player);
 
                 if (cityState.getPopulation() == 1) {
                     subCommands.add("abandon");
@@ -65,11 +67,30 @@ public class LatifundiaTabCompleter implements TabCompleter {
                 subCommands.add("create");
             }
 
-            return StringUtil.copyPartialMatches(args[0], subCommands, new ArrayList<>());
+        } else if (args.length == 2) {
+            if (cityStateManager.isMemberOfCityState(player)) {
 
+                CityState cityState = cityStateManager.getCityState(player);
+
+                if (cityState.canInvite(player)) {
+
+                    List<String> filtered = new ArrayList<>();
+
+                    for (Player listed : Bukkit.getOnlinePlayers()) {
+                        if (!cityStateManager.isMemberOfCityState(player)) {
+                            filtered.add(listed.getName());
+                        }
+                    }
+
+                    subCommands.addAll(filtered);
+
+                }
+
+            }
         }
 
-        return null;
+        return StringUtil.copyPartialMatches(args[0], subCommands, new ArrayList<>());
+
     }
 
 }

@@ -99,6 +99,11 @@ public class LatifundiaCommand implements CommandExecutor {
             return;
         }
 
+        if (args.length < 2) {
+            player.sendMessage(GeneralUtils.colour("&cPlease specify the player to invite."));
+            return;
+        }
+
         Player invited = Bukkit.getPlayerExact(args[1]);
 
         if (args.length != 2 || invited == null) {
