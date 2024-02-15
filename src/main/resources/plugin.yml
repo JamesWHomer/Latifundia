@@ -34,6 +34,14 @@ commands:
         description: Leaves the citystate
         usage: /<command> leave
         permission: latifundia.leave
+      promote:
+        description: Promotes a member
+        usage: /<command> promote
+        permission: latifundia.promote
+      kick:
+        description: Kicks a member from the citystate
+        usage: /<command> kick
+        permission: latifundia.kick
 
 permissions:
   latifundia.use:
