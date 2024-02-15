@@ -128,6 +128,11 @@ public class PlayerStalker implements Listener {
             player.setGameMode(GameMode.SURVIVAL);
         } else {
 
+            if (!cityStateManager.isMemberOfCityState(player)) {
+                player.setGameMode(GameMode.ADVENTURE);
+                return;
+            }
+
             CityState playerCityState = cityStateManager.getCityState(player);
 
             if (playerCityState.getCityStateUUID() == chunkOwner) {
