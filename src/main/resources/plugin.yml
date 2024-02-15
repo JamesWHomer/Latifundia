@@ -34,3 +34,8 @@ commands:
         description: Leaves the citystate
         usage: /<command> leave
         permission: latifundia.leave
+
+permissions:
+  latifundia.use:
+    description: "Allows use of the latifundia command"
+    default: true
