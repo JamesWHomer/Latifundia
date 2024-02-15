@@ -8,9 +8,7 @@ import net.uber.latifundia.PlayerStalker;
 import net.uber.latifundia.claimmanagement.WorldTree;
 import net.uber.latifundia.claimmanagement.WorldTreeManager;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -116,7 +114,9 @@ public class LatifundiaCommand implements CommandExecutor {
             return;
         }
 
-        cityState.invitePlayer(player);
+        cityState.invitePlayer(invited);
+
+        player.sendMessage(GeneralUtils.colour("&aInvite has been successfully sent! They have 10 minutes to accept."));
 
     }
 
@@ -127,12 +127,9 @@ public class LatifundiaCommand implements CommandExecutor {
             return;
         }
 
-        if (args.length != 2 || cityStateManager.doesCityExist(args[1])) {
-            player.sendMessage(GeneralUtils.colour("&cYou need to specify the CityState you are attempting to join."));
-            return;
-        }
+        player.sendMessage("arg1:" + args[1] + ", length: " + args.length);
 
-        if (!cityStateManager.doesCityExist(args[1])) {
+        if (!cityStateManager.doesCityStateExist(args[1])) {
             player.sendMessage(GeneralUtils.colour("&cYou cannot accept an invite to a CityState that does not exist."));
             return;
         }
@@ -140,6 +137,8 @@ public class LatifundiaCommand implements CommandExecutor {
         CityState cityState = cityStateManager.getCityState(args[1]);
 
         cityState.acceptInvite(player);
+
+        cityState.sendBroadcast("&cWelcome '" + player.getName() + "' as a new citizen!");
 
     }
 
@@ -249,19 +248,33 @@ public class LatifundiaCommand implements CommandExecutor {
 
     private void handleInfo(Player player, String[] args) {
 
-        WorldTreeManager worldTreeManager = Latifundia.getPlugin(Latifundia.class).getWorldTreeManager();
-        WorldTree worldTree = worldTreeManager.getWorldTree(player.getWorld());
+        player.sendMessage("---------INFO---------");
 
-        Point playerChunk = new Point(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
-
-        UUID ownerUUID = worldTree.queryClaim(playerChunk);
+        UUID ownerUUID = worldTreeManager.getChunkOwner(player.getLocation());
 
         if (ownerUUID == null) {
-            player.sendMessage("Chunk is unclaimed.");
+            player.sendMessage("Current Chunk Owner: Unclaimed");
         } else {
-            CityState cityState = cityStateManager.getCityState(ownerUUID);
-            player.sendMessage("Owner: " + cityState.getName());
+            CityState chunkOwner = cityStateManager.getCityState(ownerUUID);
+            player.sendMessage("Current Chunk Owner: " + chunkOwner.getName());
         }
+
+        if (cityStateManager.isMemberOfCityState(player)) {
+            CityState citystate = cityStateManager.getCityState(player);
+            player.sendMessage("Your CityState: " + citystate.getName());
+            player.sendMessage("Rank: " + citystate.getRank(player).toString());
+            player.sendMessage("Memberlist: ");
+            for (UUID uuid : citystate.getMembers()) {
+                Player member = Bukkit.getPlayer(uuid);
+                if (member != null) {
+                    player.sendMessage(" - " + member.getName());
+                }
+            }
+        } else {
+            player.sendMessage("Your CityState: None");
+        }
+
+        player.sendMessage("----------------------");
 
     }
 

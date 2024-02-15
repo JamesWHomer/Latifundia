@@ -149,7 +149,7 @@ public class CityState implements Serializable {
 
     public void acceptInvite(Player player) {
 
-        //Assuming player is not a member of a cityState
+        player.sendMessage("accept inside");
 
         if (!invitedPlayers.containsKey(player.getUniqueId())) {
             player.sendMessage(GeneralUtils.colour("&cInvite not found!"));
@@ -166,6 +166,17 @@ public class CityState implements Serializable {
         }
 
         this.addMember(player.getUniqueId());
+
+    }
+
+    public void sendBroadcast(String message) {
+
+        for (UUID uuid : memberList.keySet()) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                player.sendMessage(GeneralUtils.colour(message));
+            }
+        }
 
     }
 

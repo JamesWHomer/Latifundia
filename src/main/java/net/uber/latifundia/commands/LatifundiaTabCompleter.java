@@ -11,6 +11,7 @@ import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class LatifundiaTabCompleter implements TabCompleter {
 
@@ -67,29 +68,31 @@ public class LatifundiaTabCompleter implements TabCompleter {
                 subCommands.add("create");
             }
 
+            return StringUtil.copyPartialMatches(args[0], subCommands, new ArrayList<>());
+
         } else if (args.length == 2) {
+
             if (cityStateManager.isMemberOfCityState(player)) {
 
                 CityState cityState = cityStateManager.getCityState(player);
 
-                if (cityState.canInvite(player)) {
-
-                    List<String> filtered = new ArrayList<>();
+                if (cityState.canInvite(player) && Objects.equals(args[0], "invite")) {
 
                     for (Player listed : Bukkit.getOnlinePlayers()) {
-                        if (!cityStateManager.isMemberOfCityState(player)) {
-                            filtered.add(listed.getName());
+                        if (!cityStateManager.isMemberOfCityState(listed)) {
+                            subCommands.add(listed.getName());
                         }
                     }
-
-                    subCommands.addAll(filtered);
 
                 }
 
             }
+
+            return StringUtil.copyPartialMatches(args[1], subCommands, new ArrayList<>());
+
         }
 
-        return StringUtil.copyPartialMatches(args[0], subCommands, new ArrayList<>());
+        return null;
 
     }
 

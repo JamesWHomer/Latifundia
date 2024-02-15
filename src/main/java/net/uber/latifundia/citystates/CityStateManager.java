@@ -38,13 +38,13 @@ public class CityStateManager {
         this.playerStalker = playerStalker;
     }
 
-    public boolean doesCityExist(UUID cuuid) {
+    public boolean doesCityStateExist(UUID cuuid) {
 
         return cityStateMap.containsKey(cuuid);
 
     }
 
-    public boolean doesCityExist(String name) {
+    public boolean doesCityStateExist(String name) {
         for (UUID uuid : cityStateMap.keySet()) {
             if (Objects.equals(cityStateMap.get(uuid).getName(), name)) return true;
         }
