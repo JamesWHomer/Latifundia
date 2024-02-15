@@ -174,7 +174,7 @@ public class LatifundiaCommand implements CommandExecutor {
 
         cityStateManager.deleteCityState(uuid);
 
-        player.sendMessage(GeneralUtils.colour("&cYour CityState has been successfully abandoned."));
+        player.sendMessage(GeneralUtils.colour("&aYour CityState has been successfully abandoned."));
 
     }
 
@@ -212,7 +212,7 @@ public class LatifundiaCommand implements CommandExecutor {
         this.playerStalker.updateChunk(new Point(chunk.getX(), chunk.getZ()));
 
         if (successful) {
-            player.sendMessage(GeneralUtils.colour("&cChunk has been successfully claimed."));
+            player.sendMessage(GeneralUtils.colour("&aChunk has been successfully claimed."));
         } else {
             player.sendMessage(GeneralUtils.colour("&cChunk could not be claimed."));
         }
@@ -233,7 +233,7 @@ public class LatifundiaCommand implements CommandExecutor {
         boolean successful = cityState.unclaimChunk(chunk);
 
         if (successful) {
-            player.sendMessage(GeneralUtils.colour("&cChunk successfully unclaimed."));
+            player.sendMessage(GeneralUtils.colour("&aChunk successfully unclaimed."));
         } else {
             player.sendMessage(GeneralUtils.colour("&cChunk could not be unclaimed."));
         }
