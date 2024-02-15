@@ -111,7 +111,7 @@ public class LatifundiaCommand implements CommandExecutor {
             return;
         }
 
-        invited.sendMessage("You're Invited");
+        cityState.invitePlayer(player);
 
     }
 
@@ -124,6 +124,11 @@ public class LatifundiaCommand implements CommandExecutor {
 
         if (args.length != 2 || cityStateManager.doesCityExist(args[1])) {
             player.sendMessage(GeneralUtils.colour("&cYou need to specify the CityState you are attempting to join."));
+            return;
+        }
+
+        if (!cityStateManager.doesCityExist(args[1])) {
+            player.sendMessage(GeneralUtils.colour("&cYou cannot accept an invite to a CityState that does not exist."));
             return;
         }
 

@@ -1,5 +1,7 @@
 package net.uber.latifundia.citystates;
 
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
 import net.uber.latifundia.GeneralUtils;
 import net.uber.latifundia.Latifundia;
 import net.uber.latifundia.claimmanagement.WorldTree;
@@ -124,8 +126,24 @@ public class CityState implements Serializable {
 
         invitedPlayers.put(player.getUniqueId(), System.currentTimeMillis());
 
-        //Still have to implement accept and decline button
-        player.sendMessage(GeneralUtils.colour("&aYou have been invited to: '" + this.name + "', you have 10 minutes to accept: &4&l[accept] &2&l[decline]"));
+        TextComponent message = new TextComponent("You have been invited to: '" + this.name + "', you have 10 minutes to accept: ");
+        message.setColor(net.md_5.bungee.api.ChatColor.GREEN);
+
+        TextComponent accept = new TextComponent("[accept]");
+        accept.setColor(net.md_5.bungee.api.ChatColor.DARK_RED);
+        accept.setBold(true);
+        accept.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/lf accept " + this.name));
+
+        TextComponent decline = new TextComponent("[decline]");
+        decline.setColor(net.md_5.bungee.api.ChatColor.DARK_GREEN);
+        decline.setBold(true);
+        decline.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/lf decline " + this.name));
+
+        message.addExtra(accept);
+        message.addExtra(new TextComponent(" "));
+        message.addExtra(decline);
+
+        player.spigot().sendMessage(message);
 
     }
 
