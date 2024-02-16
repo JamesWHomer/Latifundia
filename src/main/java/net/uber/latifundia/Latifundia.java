@@ -5,6 +5,7 @@ import net.uber.latifundia.citystates.CityStateManager;
 import net.uber.latifundia.claimmanagement.WorldTreeManager;
 import net.uber.latifundia.commands.LatifundiaCommand;
 import net.uber.latifundia.commands.LatifundiaTabCompleter;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldSaveEvent;
@@ -55,6 +56,10 @@ public final class Latifundia extends JavaPlugin implements Listener {
 
     public CityStateManager getCityStateManager() {
         return cityStateManager;
+    }
+
+    public PlayerStalker getPlayerStalker() {
+        return playerStalker;
     }
 
 }
