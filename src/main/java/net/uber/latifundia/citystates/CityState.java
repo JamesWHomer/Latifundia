@@ -58,6 +58,17 @@ public class CityState implements Serializable {
         return memberList.keySet();
     }
 
+    public List<Player> getOnlineMembers() {
+        List<Player> onlineMembers = new ArrayList<>();
+        for (UUID uuid : getMembers()) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                onlineMembers.add(player);
+            }
+        }
+        return onlineMembers;
+    }
+
     public UUID getCityStateUUID() {
         return this.cityStateUUID;
     }
