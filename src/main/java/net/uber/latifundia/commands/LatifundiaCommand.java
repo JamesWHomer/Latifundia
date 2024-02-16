@@ -116,9 +116,11 @@ public class LatifundiaCommand implements CommandExecutor {
             return;
         }
 
-        cityState.removeMember(player);
+        cityState.removeMember(target);
 
-        cityState.sendBroadcast("&c" + player.getName() + " has been kicked from the CityState!");
+        cityState.sendBroadcast("&c" + target.getName() + " has been kicked from the CityState!");
+
+        target.sendMessage(GeneralUtils.colour("&cYou have been kicked from " + cityState.getName() + "!"));
 
     }
 
