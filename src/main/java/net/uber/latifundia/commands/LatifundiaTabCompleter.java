@@ -80,6 +80,10 @@ public class LatifundiaTabCompleter implements TabCompleter {
             return getPromotableMembers(player, cityState);
         }
 
+        if ("kick".equals(args[0]) && cityState.canInvite(player)) {
+            return getKickableMembers(player, cityState);
+        }
+
         return new ArrayList<>();
 
     }
@@ -102,6 +106,16 @@ public class LatifundiaTabCompleter implements TabCompleter {
         List<String> list = new ArrayList<>();
         for (Player member : cityState.getOnlineMembers()) {
             if (!player.equals(member) && cityState.canPromote(player, member)) {
+                list.add(member.getName());
+            }
+        }
+        return list;
+    }
+
+    private List<String> getKickableMembers(Player player, CityState cityState) {
+        List<String> list = new ArrayList<>();
+        for (Player member : cityState.getOnlineMembers()) {
+            if (!player.equals(member) && cityState.canKick(player, member)) {
                 list.add(member.getName());
             }
         }
