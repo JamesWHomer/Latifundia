@@ -79,12 +79,47 @@ public class LatifundiaCommand implements CommandExecutor {
             case "promote":
                 handlePromote(player, args);
                 break;
+            case "kick":
+                handleKick(player, args);
+                break;
             default:
                 player.sendMessage("Unknown command. Use /" + label + " for help.");
                 return true;
         }
 
         return true;
+    }
+
+    private void handleKick(Player player, String[] args) {
+
+        if (args.length != 2) {
+            player.sendMessage(GeneralUtils.colour("&cPlease specify a player to invite!"));
+            return;
+        }
+
+        Player target = Bukkit.getPlayerExact(args[1]);
+
+        if (player == null || !cityStateManager.isMemberOfCityState(target)) {
+            player.sendMessage(GeneralUtils.colour("&cPlease specify a valid player to invite!"));
+            return;
+        }
+
+        CityState cityState = cityStateManager.getCityState(target);
+
+        if (cityState.getCityStateUUID() != cityStateManager.getCityState(player).getCityStateUUID()) {
+            player.sendMessage(GeneralUtils.colour("&cPlease specify a valid player to invite!"));
+            return;
+        }
+
+        if (!cityState.canKick(player, target)) {
+            player.sendMessage(GeneralUtils.colour("&cYou don't have permission to kick this player!"));
+            return;
+        }
+
+        cityState.removeMember(player);
+
+        cityState.sendBroadcast("&c" + player.getName() + " has been kicked from the CityState!");
+
     }
 
     private void handlePromote(Player player, String[] args) {
@@ -190,7 +225,7 @@ public class LatifundiaCommand implements CommandExecutor {
             return;
         }
 
-        cityState.removeMember(player.getUniqueId());
+        cityState.removeMember(player);
 
     }
 
