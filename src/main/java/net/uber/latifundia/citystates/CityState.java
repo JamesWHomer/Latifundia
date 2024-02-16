@@ -1,5 +1,6 @@
 package net.uber.latifundia.citystates;
 
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.uber.latifundia.GeneralUtils;
@@ -7,7 +8,6 @@ import net.uber.latifundia.Latifundia;
 import net.uber.latifundia.claimmanagement.WorldTree;
 import net.uber.latifundia.claimmanagement.WorldTreeManager;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -129,15 +129,15 @@ public class CityState implements Serializable {
         invitedPlayers.put(player.getUniqueId(), System.currentTimeMillis());
 
         TextComponent message = new TextComponent("You have been invited to: '" + this.name + "', you have 10 minutes to accept: ");
-        message.setColor(net.md_5.bungee.api.ChatColor.GREEN);
+        message.setColor(ChatColor.GREEN);
 
         TextComponent accept = new TextComponent("[accept]");
-        accept.setColor(net.md_5.bungee.api.ChatColor.DARK_RED);
+        accept.setColor(ChatColor.DARK_GREEN);
         accept.setBold(true);
         accept.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/lf accept " + this.name));
 
         TextComponent decline = new TextComponent("[decline]");
-        decline.setColor(net.md_5.bungee.api.ChatColor.DARK_GREEN);
+        decline.setColor(ChatColor.DARK_RED);
         decline.setBold(true);
         decline.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/lf decline " + this.name));
 
