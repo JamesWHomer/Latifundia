@@ -229,6 +229,19 @@ public class CityState implements Serializable {
         return (rank == Rank.GENERAL || rank == Rank.LEADER || rank == Rank.ELDER);
     }
 
+    public boolean canKick(Player kicker, Player kickee) {
+
+        Rank kickerRank = getRank(kicker);
+        Rank kickeeRank = getRank(kickee);
+
+        if (kickerRank == Rank.LEADER) return true;
+
+        if (kickerRank == Rank.GENERAL && (kickeeRank != Rank.GENERAL && kickeeRank != Rank.LEADER)) return true;
+
+        return false;
+
+    }
+
     /**
      * Does not check if promotion is allowed
      * @param player
@@ -296,6 +309,12 @@ public class CityState implements Serializable {
 
     }
 
+    /**
+     * Leader has total power
+     * General has total power excluding over the Leader and cannot kick other generals
+     * Elder only has the power to claim and unclaim over the Serf
+     * Serf can't do shit but it can build
+     */
     public enum Rank {
         LEADER,
         GENERAL,
