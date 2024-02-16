@@ -7,6 +7,7 @@ import net.uber.latifundia.Latifundia;
 import net.uber.latifundia.claimmanagement.WorldTree;
 import net.uber.latifundia.claimmanagement.WorldTreeManager;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -67,6 +68,7 @@ public class CityState implements Serializable {
 
     public void addMember(UUID player) {
         memberList.put(player, Rank.SERF);
+        Latifundia.getPlugin(Latifundia.class).getCityStateManager().addMember(player, this.getCityStateUUID());
     }
 
     public void deleteSelf() {
@@ -171,6 +173,21 @@ public class CityState implements Serializable {
             Player player = Bukkit.getPlayer(uuid);
             if (player != null) {
                 player.sendMessage(GeneralUtils.colour(message));
+            }
+        }
+
+    }
+
+    public void sendActionbarBroadcast(String message) {
+
+        int fadeIn = 5;
+        int stay = 20;
+        int fadeOut = 10;
+
+        for (UUID uuid : memberList.keySet()) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                player.sendTitle(GeneralUtils.colour(message), "", fadeIn, stay, fadeOut);
             }
         }
 

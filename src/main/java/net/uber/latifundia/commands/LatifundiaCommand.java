@@ -136,7 +136,7 @@ public class LatifundiaCommand implements CommandExecutor {
 
         cityState.acceptInvite(player);
 
-        cityState.sendBroadcast("&cWelcome '" + player.getName() + "' as a new citizen!");
+        cityState.sendBroadcast("&aWelcome '" + player.getName() + "' as a new citizen!");
 
     }
 

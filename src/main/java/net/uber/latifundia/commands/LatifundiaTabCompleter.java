@@ -12,6 +12,7 @@ import org.bukkit.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class LatifundiaTabCompleter implements TabCompleter {
 
@@ -23,77 +24,61 @@ public class LatifundiaTabCompleter implements TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-
-        if (!(sender instanceof Player)) {
-            return null;
-        }
-
+        if (!(sender instanceof Player)) return null;
         Player player = (Player) sender;
 
         if (args.length == 0) return null;
-
-        List<String> subCommands = new ArrayList<>();
-
-        if (args.length == 1) {
-
-            subCommands.add("info");
-
-            if (cityStateManager.isMemberOfCityState(player)) {
-                CityState cityState = cityStateManager.getCityState(player);
-
-                if (cityState.getPopulation() == 1) {
-                    subCommands.add("abandon");
-                } else {
-                    subCommands.add("leave");
-                }
-
-                if (cityState.canClaim(player)) {
-                    if (cityState.ownsChunk(player.getLocation().getChunk())) {
-                        subCommands.add("unclaim");
-                    }
-                }
-
-                if (cityState.canUnclaim(player)) {
-                    if (!cityState.ownsChunk(player.getLocation().getChunk())) {
-                        subCommands.add("claim");
-                    }
-                }
-
-                if (cityState.canInvite(player)) {
-                    subCommands.add("invite");
-                    subCommands.add("promote");
-                }
-
-            } else {
-                subCommands.add("create");
-            }
-
-            return StringUtil.copyPartialMatches(args[0], subCommands, new ArrayList<>());
-
-        } else if (args.length == 2) {
-
-            if (cityStateManager.isMemberOfCityState(player)) {
-
-                CityState cityState = cityStateManager.getCityState(player);
-
-                if (cityState.canInvite(player) && Objects.equals(args[0], "invite")) {
-
-                    for (Player listed : Bukkit.getOnlinePlayers()) {
-                        if (!cityStateManager.isMemberOfCityState(listed)) {
-                            subCommands.add(listed.getName());
-                        }
-                    }
-
-                }
-
-            }
-
-            return StringUtil.copyPartialMatches(args[1], subCommands, new ArrayList<>());
-
-        }
+        if (args.length == 1) return getFirstArgumentSuggestions(player, args[0]);
+        if (args.length == 2) return getSecondArgumentSuggestions(player, args);
 
         return null;
-
     }
 
+    private List<String> getFirstArgumentSuggestions(Player player, String currentArg) {
+        List<String> suggestions = new ArrayList<>();
+        suggestions.add("info");
+
+        if (cityStateManager.isMemberOfCityState(player)) {
+            CityState cityState = cityStateManager.getCityState(player);
+            addCityStateSpecificSuggestions(player, cityState, suggestions);
+        } else {
+            suggestions.add("create");
+        }
+
+        return StringUtil.copyPartialMatches(currentArg, suggestions, new ArrayList<>());
+    }
+
+    private void addCityStateSpecificSuggestions(Player player, CityState cityState, List<String> suggestions) {
+        if (cityState.getPopulation() == 1) {
+            suggestions.add("abandon");
+        } else {
+            suggestions.add("leave");
+        }
+
+        if (cityState.canClaim(player)) {
+            suggestions.add(cityState.ownsChunk(player.getLocation().getChunk()) ? "unclaim" : "claim");
+        }
+
+        if (cityState.canInvite(player)) {
+            suggestions.addAll(List.of("invite", "promote"));
+        }
+    }
+
+    private List<String> getSecondArgumentSuggestions(Player player, String[] args) {
+        if (!cityStateManager.isMemberOfCityState(player)) return null;
+        CityState cityState = cityStateManager.getCityState(player);
+
+        if ("invite".equals(args[0]) && cityState.canInvite(player)) {
+            return getInviteSuggestions();
+        }
+
+        return new ArrayList<>();
+    }
+
+    private List<String> getInviteSuggestions() {
+        return Bukkit.getOnlinePlayers().stream()
+                .filter(player -> !cityStateManager.isMemberOfCityState(player))
+                .map(Player::getName)
+                .collect(Collectors.toList());
+    }
 }
