@@ -11,7 +11,6 @@ import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class LatifundiaTabCompleter implements TabCompleter {
@@ -60,25 +59,53 @@ public class LatifundiaTabCompleter implements TabCompleter {
         }
 
         if (cityState.canInvite(player)) {
-            suggestions.addAll(List.of("invite", "promote"));
+            suggestions.addAll(List.of("invite", "promote", "kick"));
         }
+
+
     }
 
     private List<String> getSecondArgumentSuggestions(Player player, String[] args) {
+
         if (!cityStateManager.isMemberOfCityState(player)) return null;
         CityState cityState = cityStateManager.getCityState(player);
 
         if ("invite".equals(args[0]) && cityState.canInvite(player)) {
-            return getInviteSuggestions();
+            return getOnlineSoloPlayers();
+        }
+
+        //Temporary method, make sure to fix canInvite or make a method idk or fix the damn system
+
+        if ("promote".equals(args[0]) && cityState.canInvite(player)) {
+            return getPromotableMembers(player, cityState);
         }
 
         return new ArrayList<>();
+
     }
 
-    private List<String> getInviteSuggestions() {
+    private List<String> getOnlineSoloPlayers() {
         return Bukkit.getOnlinePlayers().stream()
                 .filter(player -> !cityStateManager.isMemberOfCityState(player))
                 .map(Player::getName)
                 .collect(Collectors.toList());
     }
+
+    private List<String> getOnlineCityStatePlayers() {
+        return Bukkit.getOnlinePlayers().stream()
+                .filter(player -> cityStateManager.isMemberOfCityState(player))
+                .map(Player::getName)
+                .collect(Collectors.toList());
+    }
+
+    private List<String> getPromotableMembers(Player player, CityState cityState) {
+        List<String> list = new ArrayList<>();
+        for (Player member : cityState.getOnlineMembers()) {
+            if (!player.equals(member) && cityState.canPromote(player, member)) {
+                list.add(member.getName());
+            }
+        }
+        return list;
+    }
+
 }
