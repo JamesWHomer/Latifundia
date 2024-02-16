@@ -4,10 +4,7 @@ import net.uber.latifundia.citystates.CityState;
 import net.uber.latifundia.citystates.CityStateManager;
 import net.uber.latifundia.citystates.Relation;
 import net.uber.latifundia.claimmanagement.WorldTreeManager;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -181,6 +178,16 @@ public class PlayerStalker implements Listener {
                 updatePlayer(player);
             }
         }
+    }
+
+    /**
+     * Updates the ownership status for all players in a given chunk but with easier Chunk parameter.
+     *
+     * @param chunk The chunk to be updated.
+     */
+    public void updateChunk(Chunk chunk) {
+        Point point = new Point(chunk.getX(), chunk.getZ());
+        this.updateChunk(point);
     }
 
     /**
