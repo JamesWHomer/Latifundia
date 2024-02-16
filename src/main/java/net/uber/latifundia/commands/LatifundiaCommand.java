@@ -196,7 +196,9 @@ public class LatifundiaCommand implements CommandExecutor {
 
         CityState cityState = cityStateManager.createCityState(args[1], player);
 
-        player.sendMessage("CityState Created!");
+        cityState.claimChunk(player.getLocation().getChunk());
+
+        player.sendMessage(GeneralUtils.colour("&aCityState has been successfully created and your chunk has been claimed!"));
 
     }
 

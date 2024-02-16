@@ -36,9 +36,7 @@ public class CityState implements Serializable {
     public CityState(UUID cuuid, String name, Player creator) {
         this.name = name;
         this.cityStateUUID = cuuid;
-        Point chunkPoint = new Point(creator.getLocation().getChunk().getX(), creator.getLocation().getChunk().getZ());
         List<Point> claimList = new ArrayList<>();
-        claimList.add(chunkPoint);
         this.worldClaimMap.put(creator.getWorld().getName(), claimList);
         this.memberList.put(creator.getUniqueId(), Rank.LEADER);
     }
@@ -149,8 +147,6 @@ public class CityState implements Serializable {
 
     public void acceptInvite(Player player) {
 
-        player.sendMessage("accept inside");
-
         if (!invitedPlayers.containsKey(player.getUniqueId())) {
             player.sendMessage(GeneralUtils.colour("&cInvite not found!"));
             return;
@@ -179,7 +175,6 @@ public class CityState implements Serializable {
         }
 
     }
-
 
 
     public boolean claimChunk(Chunk chunk) {
