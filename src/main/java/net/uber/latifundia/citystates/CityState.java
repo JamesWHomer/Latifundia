@@ -227,7 +227,12 @@ public class CityState implements Serializable {
         return (rank == Rank.GENERAL || rank == Rank.LEADER || rank == Rank.ELDER);
     }
 
-    //Probably could use simplifying, maybe with integer values
+    /**
+     *
+     * @param player The person who is promoting
+     * @param desiredRank The desired rank
+     * @return
+     */
     public boolean canPromote(Player player, Rank desiredRank) {
         Rank rank = getRank(player);
         if (rank == Rank.SERF) return false;
@@ -236,6 +241,37 @@ public class CityState implements Serializable {
         if (desiredRank == Rank.GENERAL && rank == Rank.LEADER) return true;
         if (desiredRank == Rank.LEADER && rank == Rank.LEADER) return true;
         return false;
+    }
+
+    /**
+     * Assumes both players are valid and in the citystate and are not the same
+     * @param promoter
+     * @param promotee
+     * @return
+     */
+    public boolean canPromote(Player promoter, Player promotee) {
+
+        Rank promoterRank = getRank(promoter);
+        Rank promoteeRank = getRank(promotee);
+
+        Rank desiredRank = null;
+
+        switch (promoteeRank) {
+            case SERF:
+                desiredRank = Rank.ELDER;
+                break;
+            case ELDER:
+                desiredRank = Rank.GENERAL;
+                break;
+            case GENERAL:
+                desiredRank = Rank.LEADER;
+                break;
+            case LEADER:
+                return false;
+        }
+
+        return this.canPromote(promoter, desiredRank);
+
     }
 
     public enum Rank {
