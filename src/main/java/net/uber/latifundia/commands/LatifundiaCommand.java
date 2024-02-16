@@ -15,6 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.awt.*;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -75,12 +76,47 @@ public class LatifundiaCommand implements CommandExecutor {
             case "accept":
                 handleAccept(player, args);
                 break;
+            case "promote":
+                handlePromote(player, args);
+                break;
             default:
                 player.sendMessage("Unknown command. Use /" + label + " for help.");
                 return true;
         }
 
         return true;
+    }
+
+    private void handlePromote(Player player, String[] args) {
+
+        if (args.length != 2) {
+            player.sendMessage(GeneralUtils.colour("&cPlease specify a player to invite!"));
+            return;
+        }
+
+        Player target = Bukkit.getPlayerExact(args[1]);
+
+        if (player == null || !cityStateManager.isMemberOfCityState(target)) {
+            player.sendMessage(GeneralUtils.colour("&cPlease specify a valid player to invite!"));
+            return;
+        }
+
+        CityState cityState = cityStateManager.getCityState(target);
+
+        if (cityState.getCityStateUUID() != cityStateManager.getCityState(player).getCityStateUUID()) {
+            player.sendMessage(GeneralUtils.colour("&cPlease specify a valid player to invite!"));
+            return;
+        }
+
+        if (!cityState.canPromote(player, target)) {
+            player.sendMessage(GeneralUtils.colour("&cYou don't have permission to promote this player!"));
+            return;
+        }
+
+        cityState.promote(target);
+
+        cityState.sendBroadcast("&a" + target.getName() + " has been promoted to " + cityState.getRank(target).toString().toLowerCase(Locale.ROOT) + " by " + player.getName());
+
     }
 
     private void handleInvite(Player player, String[] args) {

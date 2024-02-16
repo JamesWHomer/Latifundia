@@ -66,9 +66,11 @@ public class CityState implements Serializable {
         memberList.remove(player);
     }
 
-    public void addMember(UUID player) {
-        memberList.put(player, Rank.SERF);
-        Latifundia.getPlugin(Latifundia.class).getCityStateManager().addMember(player, this.getCityStateUUID());
+    public void addMember(Player player) {
+        memberList.put(player.getUniqueId(), Rank.SERF);
+        Latifundia.getPlugin(Latifundia.class).getCityStateManager().addMember(player.getUniqueId(), this.getCityStateUUID());
+        Latifundia.getPlugin(Latifundia.class).getPlayerStalker().updatePlayer(player);
+        Latifundia.getPlugin(Latifundia.class).getPlayerStalker().updateChunk(player.getLocation().getChunk());
     }
 
     public void deleteSelf() {
@@ -163,7 +165,7 @@ public class CityState implements Serializable {
             return;
         }
 
-        this.addMember(player.getUniqueId());
+        this.addMember(player);
 
     }
 
