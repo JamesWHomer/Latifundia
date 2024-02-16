@@ -127,8 +127,6 @@ public class LatifundiaCommand implements CommandExecutor {
             return;
         }
 
-        player.sendMessage("arg1:" + args[1] + ", length: " + args.length);
-
         if (!cityStateManager.doesCityStateExist(args[1])) {
             player.sendMessage(GeneralUtils.colour("&cYou cannot accept an invite to a CityState that does not exist."));
             return;
