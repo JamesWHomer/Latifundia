@@ -122,6 +122,10 @@ public class CityStateManager {
         playerCityStateMap.put(player, cityState);
     }
 
+    public void removeMember(UUID player) {
+        playerCityStateMap.remove(player);
+    }
+
     public void removeCityStateFile(CityState cityState) throws IOException {
 
         removeCityStateFile(cityState.getCityStateUUID().toString() + ".citystate");
