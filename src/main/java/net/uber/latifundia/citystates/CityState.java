@@ -227,6 +227,10 @@ public class CityState implements Serializable {
         return (rank == Rank.GENERAL || rank == Rank.LEADER || rank == Rank.ELDER);
     }
 
+    public void promote(Player player, Rank rank) {
+        memberList.put(player.getUniqueId(), rank);
+    }
+
     /**
      *
      * @param player The person who is promoting
